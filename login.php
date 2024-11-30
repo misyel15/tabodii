@@ -257,7 +257,7 @@ include 'headers.php';
       <br>
       <div class="footer-links">
         
-  <center>    <p class="mt-3">&copy; 2024 Madridejos Community College. All Rights Reserved.</p></center> 
+  <center>    <p class="mt-3">&copy; 2024 000Madridejos Community College. All Rights Reserved.</p></center> 
     </div>
   </footer>
 
