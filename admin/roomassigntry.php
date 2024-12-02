@@ -212,7 +212,7 @@ $stmt->close();
                     <!-- Days Field -->
                     <div class="form-group">
                         <label for="edit_days" class="control-label">Days</label>
-                        <select class="form-control" name="days" id="edit_days" required>
+                        <select class="form-control" name="days" id="edit_days" readonly>
                             <option value="0" disabled selected>Select Days</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM days");
@@ -232,7 +232,7 @@ $stmt->close();
                     <!-- Timeslot Field -->
                     <div class="form-group">
                         <label for="edit_timeslot" class="control-label">Timeslot</label>
-                        <select class="form-control" name="timeslot" id="edit_timeslot" required>
+                        <select class="form-control" name="timeslot" id="edit_timeslot" readonly>
                             <option value="0" disabled selected>Select Timeslot</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM timeslot");
