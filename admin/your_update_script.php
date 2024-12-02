@@ -1,5 +1,5 @@
 <?php
-include "database/scheduling_db.sql"; // Ensure this file contains the database connection
+//include "database/scheduling_db.sql"; // Ensure this file contains the database connection
 
 // Ensure that the form is being submitted with the POST method
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
