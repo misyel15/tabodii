@@ -1,59 +1,51 @@
 <?php
-include "db_connect.php";
+// Include your database connection file
+require_once 'db_connection.php';
 
-// Ensure that the form is submitted with the POST method
+// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate if required fields are present
+    if (empty($_POST['edit_id']) || empty($_POST['faculty']) || empty($_POST['semester']) || 
+        empty($_POST['course']) || empty($_POST['subject']) || empty($_POST['room_name']) || 
+        empty($_POST['days']) || empty($_POST['timeslot'])) {
+        die('Error: Missing required fields.');
+    }
 
-    // Check if all required fields are set
-    $requiredFields = ['id', 'faculty', 'semester', 'course', 'subject', 'room_name', 'days', 'timeslot'];
-    foreach ($requiredFields as $field) {
-        if (empty($_POST[$field])) {
-            echo "Error: Missing required fields.";
-            exit;
+    // Retrieve form data and sanitize it
+    $edit_id = intval($_POST['edit_id']);
+    $dept_id = intval($_POST['dept_id']);
+    $faculty_id = intval($_POST['faculty']);
+    $semester = htmlspecialchars($_POST['semester']);
+    $course = htmlspecialchars($_POST['course']);
+    $subject = htmlspecialchars($_POST['subject']);
+    $room_id = intval($_POST['room_name']);
+    $days = htmlspecialchars($_POST['days']);
+    $timeslot_id = intval($_POST['timeslot']);
+
+    try {
+        // Prepare the SQL query for updating the schedule entry
+        $stmt = $conn->prepare("
+            UPDATE schedules 
+            SET faculty_id = ?, semester = ?, course = ?, subject = ?, room_id = ?, days = ?, timeslot_id = ?
+            WHERE id = ? AND dept_id = ?
+        ");
+        $stmt->bind_param("isssisiis", $faculty_id, $semester, $course, $subject, $room_id, $days, $timeslot_id, $edit_id, $dept_id);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            echo 'Schedule updated successfully.';
+        } else {
+            throw new Exception('Failed to update schedule. ' . $stmt->error);
         }
+
+        // Close the statement
+        $stmt->close();
+    } catch (Exception $e) {
+        // Handle errors
+        echo 'Error: ' . $e->getMessage();
     }
-
-    // Get the form values
-    $id = $_POST['id'];
-    $faculty = $_POST['faculty'];
-    $semester = $_POST['semester'];
-    $course = $_POST['course'];
-    $subject = $_POST['subject'];
-    $room_name = $_POST['room_name'];
-    $days = $_POST['days'];
-    $timeslot = $_POST['timeslot'];
-
-    // Fetch `dept_id` automatically based on `faculty`
-    $stmt = $conn->prepare("SELECT dept_id FROM faculty WHERE id = ?");
-    $stmt->bind_param("i", $faculty);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        $dept_id = $row['dept_id'];
-    } else {
-        echo "Error: Faculty not found.";
-        exit;
-    }
-
-    $stmt->close();
-
-    // Update the schedule
-    $stmt = $conn->prepare("UPDATE loading 
-        SET dept_id = ?, faculty = ?, semester = ?, course = ?, subjects = ?, room_name = ?, days = ?, timeslot = ? 
-        WHERE id = ?");
-    $stmt->bind_param("ssssssssi", $dept_id, $faculty, $semester, $course, $subject, $room_name, $days, $timeslot, $id);
-
-    if ($stmt->execute()) {
-        echo "Schedule entry updated successfully!";
-        header("Location: roomassigntry"); // Adjust this URL as needed
-        exit;
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
-    $stmt->close();
-} else {
-    echo "Invalid request method.";
 }
+
+// Close the database connection
+$conn->close();
 ?>
