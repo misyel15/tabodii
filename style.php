@@ -43,7 +43,7 @@ function parseXMLSecurely($xmlString) {
 
 // Example usage
 try {
-    $xmlString = '<root><element>Sample Value</element></root>'; // Example XML input
+    $xmlString = '<root><element></element></root>'; // Example XML input
     $dom = parseXMLSecurely($xmlString);
 
     // Process XML elements
