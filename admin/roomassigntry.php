@@ -107,8 +107,8 @@ $stmt->close();
                 </button>
             </div>
             <form id="editScheduleForm" method="POST" action="your_update_script.php"> <!-- Specify your action script -->
-                <input type="hidden" name="id" id="edit_id" value="<?php echo htmlspecialchars($record['id']); ?>">
-		     <input type="hidden" name="dept_id" value="<?php echo htmlspecialchars($dept_id); ?>">
+                <input type="hidden" name="edit_id" id="edit_id" value="<?php echo htmlspecialchars($record['id']); ?>">
+                <input type="hidden" name="dept_id" value="<?php echo htmlspecialchars($dept_id); ?>">
                 <div class="modal-body">
                     <!-- Faculty Field -->
                     <div class="form-group">
