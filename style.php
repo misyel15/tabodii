@@ -1,4 +1,62 @@
- <!-- Required meta tags-->
+<?php
+// Security Headers
+header("Referrer-Policy: strict-origin-when-cross-origin");
+header("Permissions-Policy: geolocation=(self), microphone=(), camera=()");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-scripts.com;");
+header("X-Frame-Options: DENY");
+header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
+header("X-Content-Type-Options: nosniff");
+header("X-XSS-Protection: 1; mode=block");
+
+// Redirect HTTP to HTTPS
+if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') {
+    header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+    exit();
+}
+
+// Secure session cookie settings
+ini_set('session.cookie_secure', '1');    // Enforces HTTPS-only session cookies
+ini_set('session.cookie_httponly', '1');  // Prevents JavaScript from accessing session cookies
+ini_set('session.cookie_samesite', 'Strict'); // Prevents CSRF
+
+// Anti-XXE: Secure XML parsing
+libxml_use_internal_errors(true); // Suppress libxml errors for better handling
+
+// Function to parse XML securely
+function parseXMLSecurely($xmlString) {
+    if (empty($xmlString)) {
+        throw new Exception('The provided XML string is empty.');
+    }
+
+    // Create a new DOMDocument instance
+    $dom = new DOMDocument();
+    
+    // Load XML securely with LIBXML_NONET to prevent external entity loading
+    if (!$dom->loadXML($xmlString, LIBXML_NOENT | LIBXML_NONET | LIBXML_NOCDATA)) {
+        $errors = libxml_get_errors();
+        libxml_clear_errors(); // Clear errors after fetching
+        throw new Exception('Error loading XML: ' . implode(", ", array_map(fn($err) => $err->message, $errors)));
+    }
+
+    return $dom;
+}
+
+// Example usage
+try {
+    $xmlString = '<root><element>Sample Value</element></root>'; // Example XML input
+    $dom = parseXMLSecurely($xmlString);
+
+    // Process XML elements
+    $elements = $dom->getElementsByTagName('element');
+    foreach ($elements as $element) {
+        echo 'Element value: ' . $element->nodeValue;
+    }
+} catch (Exception $e) {
+    error_log('Error processing XML: ' . $e->getMessage());
+    echo 'Error processing XML. Please try again later.';
+}
+?>
+<!-- Required meta tags-->
  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
