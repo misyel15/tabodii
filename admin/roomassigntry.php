@@ -91,6 +91,199 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
     </div>
 </div>
 
+<?php
+// Assume $load_id and $dept_id are defined and sanitized
+$stmt = $conn->prepare("SELECT * FROM loading WHERE id = ?");
+$stmt->bind_param("i", $load_id);
+$stmt->execute();
+$record = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+?>
+
+<!-- Edit Entry Modal -->
+<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule Entry</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editScheduleForm" method="POST" action="your_update_script.php"> <!-- Specify your action script -->
+                <input type="hidden" name="edit_id" id="edit_id" value="<?php echo htmlspecialchars($record['id']); ?>">
+                <input type="hidden" name="dept_id" value="<?php echo htmlspecialchars($dept_id); ?>">
+                <div class="modal-body">
+                    <!-- Faculty Field -->
+                    <div class="form-group">
+                        <label for="edit_faculty" class="control-label">Faculty</label>
+                        <select name="faculty" id="edit_faculty" class="custom-select select2" required>
+                            <option value="0">All</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE dept_id = ? ORDER BY name ASC");
+                            $stmt->bind_param("i", $dept_id);
+                            $stmt->execute();
+                            $faculty_result = $stmt->get_result();
+                            while ($row = $faculty_result->fetch_assoc()):
+                                $selected = ($row['id'] == $record['faculty_id']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['id']); ?>" <?php echo $selected; ?>><?php echo ucwords(htmlspecialchars($row['name'])); ?></option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Semester Field -->
+                    <div class="form-group">
+                        <label for="edit_semester" class="control-label">Semester</label>
+                        <select name="semester" id="edit_semester" class="form-control" required>
+                            <option value="0" disabled>Select Semester</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM semester");
+                            $stmt->execute();
+                            $semester_result = $stmt->get_result();
+                            while ($row = $semester_result->fetch_assoc()):
+                                $semester = $row['sem'];
+                                $selected = ($semester == $record['semester']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($semester); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($semester)); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Course Field -->
+                    <div class="form-group">
+                        <label for="edit_course" class="control-label">Course</label>
+                        <select class="form-control" name="course" id="edit_course" required>
+                            <option value="0" disabled>Select Course</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM courses WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
+                            $stmt->execute();
+                            $course_result = $stmt->get_result();
+                            while ($row = $course_result->fetch_assoc()):
+                                $selected = ($row['course'] == $record['course']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['course']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['course'])); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Section Field -->
+                    <div class="form-group">
+                        <label for="edit_yrsection" class="control-label">Section</label>
+                        <select class="form-control" name="yrsection" id="edit_yrsection" required>
+                            <option value="0" disabled>Select Yr. & Sec.</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM section WHERE dept_id = ? ORDER BY year ASC, section ASC");
+                            $stmt->bind_param("i", $dept_id);
+                            $stmt->execute();
+                            $section_result = $stmt->get_result();
+                            while ($row = $section_result->fetch_assoc()):
+                                $yr_section_value = $row['year'] . $row['section'];
+                                $yr_section_display = $row['year'] . " " . $row['section'];
+                                $selected = ($yr_section_value == $record['yrsection']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($yr_section_value); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($yr_section_display)); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Subject Field -->
+                    <div class="form-group">
+                        <label for="edit_subject" class="control-label">Subject</label>
+                        <select class="form-control" name="subject" id="edit_subject" required>
+                            <option value="" disabled>Select Subject</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM subjects WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
+                            $stmt->execute();
+                            $subject_result = $stmt->get_result();
+                            while ($prow = $subject_result->fetch_assoc()):
+                                $subject = $prow['subject'];
+                                $selected = ($subject == $record['subject']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($subject); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($subject)); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Room Field -->
+                    <div class="form-group">
+                        <label for="edit_room" class="control-label">Room</label>
+                        <select class="form-control" name="room" id="edit_room" required>
+                            <option value="0" disabled selected>Select Room</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM roomlist WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
+                            $stmt->execute();
+                            $room_result = $stmt->get_result();
+                            while ($row = $room_result->fetch_assoc()):
+                                $room_id = $row['room_id'];
+                                $room_name = $row['room_name'];
+                                $selected = ($room_id == $record['room_id']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($room_id); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($room_name)); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Days Field -->
+                    <div class="form-group">
+                        <label for="edit_days" class="control-label">Days</label>
+                        <select class="form-control" name="days" id="edit_days" required>
+                            <option value="0" disabled selected>Select Days</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM days");
+                            $stmt->execute();
+                            $days_result = $stmt->get_result();
+                            while ($row = $days_result->fetch_assoc()):
+                                $selected = ($row['days'] == $record['days']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['days']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['days'])); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                    <!-- Timeslot Field -->
+                    <div class="form-group">
+                        <label for="edit_timeslot" class="control-label">Timeslot</label>
+                        <select class="form-control " name="timeslot" id="edit_timeslot" required>
+                            <option value="0" disabled selected>Select Timeslot</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM timeslot");
+                            $stmt->execute();
+                            $timeslot_result = $stmt->get_result();
+                            while ($row = $timeslot_result->fetch_assoc()):
+                                $selected = ($row['id'] == $record['timeslot_id']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['id']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['timeslot'] . " " . $row['schedule'])); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <!-- Edit Entry Modal -->
