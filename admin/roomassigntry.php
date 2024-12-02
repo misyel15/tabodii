@@ -1,4 +1,6 @@
 <?php
+
+
 session_start();
 include('db_connect.php');
 include 'includes/header.php';
@@ -68,13 +70,8 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '">' 
                                         . $newSched 
                                         . '<br>'
-                                        . '<span>
-    <button class="btn btn-sm btn-primary edit_load" type="button" data-id="<?php echo $load_id; ?>" data-toggle="modal" data-target="#editScheduleModal">
-        <i class="fa fa-edit"></i> Edit
-    </button>
-</span>
-
-'
+                                       . '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#editScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
+    
                                         . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
                                         . '</td>';
                                 } else {
@@ -90,7 +87,6 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
         </div>
     </div>
 </div>
-
 <?php
 // Assume $load_id and $dept_id are defined and sanitized
 $stmt = $conn->prepare("SELECT * FROM loading WHERE id = ?");
@@ -286,547 +282,6 @@ $stmt->close();
 </div>
 
 
-<!-- Edit Entry Modal -->
-<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editScheduleForm" method="POST" action="update_schedule.php">
-                  <input type="hidden" name="load_id" id="load_id">
-
-                  <!-- Faculty Dropdown -->
-                  <div class="form-group">
-                    <label for="faculty" class="control-label">Faculty</label>
-                    <select name="faculty" id="faculty" class="custom-select select2">
-                      <option value="0">All</option>
-                      <?php 
-                        $faculty_query = $conn->query("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name 
-                                                       FROM faculty 
-                                                       WHERE dept_id = '$dept_id' 
-                                                       ORDER BY CONCAT(lastname, ', ', firstname, ' ', middlename) ASC");
-                        while ($row = $faculty_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['id']; ?>">
-                        <?php echo ucwords($row['name']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Semester Dropdown -->
-                  <div class="form-group">
-                    <label for="semester" class="control-label">Semester</label>
-                    <select name="semester" id="semester" class="form-control">
-                      <option value="0" disabled>Select Semester</option>
-                      <?php 
-                        $semester_query = $conn->query("SELECT * FROM semester");
-                        while ($row = $semester_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['sem']; ?>">
-                        <?php echo ucwords($row['sem']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Course Dropdown -->
-                  <div class="form-group">
-                    <label for="course" class="control-label">Course</label>
-                    <select class="form-control" name="course" id="course" required onchange="populateYear(this.value)">
-                      <option value="0" disabled>Select Course</option>
-                      <?php 
-                        $course_query = $conn->query("SELECT * FROM courses WHERE dept_id = '$dept_id'");
-                        while ($row = $course_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['course']; ?>">
-                        <?php echo ucwords($row['course']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Year & Section Dropdown -->
-                  <div class="form-group">
-                    <label for="yrsection" class="control-label">Section</label>
-                    <select class="form-control" name="yrsection" id="yrsection" required onchange="populateSubjects()">
-                      <option value="0" disabled>Select Yr. & Sec.</option>
-                      <?php 
-                        $section_query = $conn->query("SELECT * FROM section WHERE dept_id = '$dept_id' ORDER BY year ASC, section ASC");
-                        while ($row = $section_query->fetch_array()):
-                          $yr_section_value = $row['year'] . $row['section']; 
-                          $yr_section_display = $row['year'] . " " . $row['section'];
-                      ?>
-                      <option value="<?php echo $yr_section_value; ?>">
-                        <?php echo ucwords($yr_section_display); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Subject Dropdown -->
-                  <div class="form-group">
-                    <label for="subject" class="control-label">Subject</label>
-                    <select class="form-control" name="subject" id="subject" required>
-                      <option value="" disabled>Select Subject</option>
-                      <?php 
-                        $subject_query = $conn->query("SELECT * FROM subjects WHERE dept_id = '$dept_id'");
-                        while ($row = $subject_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['subject']; ?>">
-                        <?php echo ucwords($row['subject']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Room Dropdown -->
-                  <div class="form-group">
-                    <label for="room" class="control-label">Room</label>
-                    <select class="form-control" name="room" id="room" required>
-                      <option value="" disabled>Select Room</option>
-                      <?php 
-                        $room_query = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id'");
-                        while ($row = $room_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['room_id']; ?>">
-                        <?php echo ucwords($row['room_name']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Days of the Week Dropdown -->
-                  <div class="form-group">
-                    <label for="days" class="control-label">Days of Week</label>
-                    <select class="form-control" name="days" id="days">
-                      <option value="" disabled>Select Days of Week</option>
-                      <?php 
-                        $days_query = $conn->query("SELECT * FROM days");
-                        while ($row = $days_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['days']; ?>">
-                        <?php echo ucwords($row['days']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Timeslot Dropdown -->
-                  <div class="form-group">
-                    <label for="timeslot_id" class="control-label">Timeslot</label>
-                    <select class="form-control" name="timeslot_id" id="timeslot_id" required>
-                      <option value="" disabled>Select Timeslot</option>
-                      <?php 
-                        $timeslot_query = $conn->query("SELECT * FROM timeslot");
-                        while ($row = $timeslot_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['id']; ?>">
-                        <?php echo ucwords($row['timeslot'] . " " . $row['schedule']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" form="editScheduleForm" class="btn btn-primary">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<script>
-$(document).ready(function() {
-    $('.edit_load').on('click', function() {
-        var load_id = $(this).data('id');
-        $.ajax({
-            url: 'fetch_loading_data.php',
-            type: 'GET',
-            data: { id: load_id },
-            success: function(data) {
-                console.log("Fetched data:", data);
-                var loading_data = JSON.parse(data);
-                $('#load_id').val(load_id);
-                $('#faculty').val(loading_data.dept_id);
-                $('#semester').val(loading_data.semester);
-                $('#course').val(loading_data.course);
-                $('#yrsection').val(loading_data.yrsection);
-                $('#subject').val(loading_data.subject);
-                $('#room').val(loading_data.rooms);
-                $('#days').val(loading_data.days);
-                $('#timeslot_id').val(loading_data.timeslot_id);
-
-                // Additional debugging
-                console.log("Selected Faculty:", $('#faculty').val());
-                console.log("Selected Semester:", $('#semester').val());
-                console.log("Selected Course:", $('#course').val());
-                console.log("Selected Year & Section:", $('#yrsection').val());
-                console.log("Selected Subject:", $('#subject').val());
-                console.log("Selected Room:", $('#room').val());
-                console.log("Selected Days:", $('#days').val());
-                console.log("Selected Timeslot:", $('#timeslot_id').val());
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data:", error);
-                console.log("Response Text:", xhr.responseText);
-            }
-        });
-    });
-});
-</script>
-
-
-
-
-<!-- Add this to your head or before your scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
-
-
-
-
-
-    <!-- Table Panel for Tuesday/Thursday -->
-	<div class="container-fluid mt-5">
-        <!-- Table Panel for Monday/Wednesday -->
-        <div class="card mb-4">
-            <div class="card-header text-center">
-            <h3>Tuesday/Thursday</h3>
-            <div class="d-flex justify-content-end">
-                <!-- Print Button -->
-                <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printtth">
-                    <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
-                </button>
-                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth.php">
-                    <!-- Form elements if needed -->
-                </form>
-            </div>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered waffle no-grid" id="insloadtable">
-                <thead>
-                    <tr>
-                        <th class="text-center">Time</th>
-                       <?php
-                        // PHP code to generate table headers
-                        $rooms = array();
-                        $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' order by room_id;");
-                        while ($r = $roomsdata->fetch_assoc()) {
-                            $rooms[] = $r['room_name'];
-                        }
-                        foreach ($rooms as $room) {
-                            echo '<th class="text-center">' . $room . '</th>';
-                        }
-                        ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $times = array();
-                    $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='TTH' AND dept_id = '$dept_id' order by time_id;");
-                    while ($t = $timesdata->fetch_assoc()) {
-                        $times[] = $t['timeslot'];
-                    }
-
-                    foreach ($times as $time) {
-                        echo "<tr><td>$time</td>";
-                        foreach ($rooms as $room) {
-                            $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='TTH'";
-                            $result = mysqli_query($conn, $query);
-                            if (mysqli_num_rows($result) > 0) {
-                                $row = mysqli_fetch_assoc($result);
-                                $course = $row['course'];
-                                $subject = $row['subjects'];
-                                $faculty = $row['faculty'];
-                                $load_id = $row['id'];
-                                $scheds = $subject . " " . $course;
-                                $faculty_name = $conn->query("SELECT concat(lastname, ', ', firstname, ' ', middlename) as name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
-                                $newSched = $scheds . " " . $faculty_name;
-                                echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . $subject . '">' 
-                                    . $newSched 
-                                    . '<br>'
-									. '<span>
-    <button class="btn btn-sm btn-primary edit_load" type="button" data-id="<?php echo $load_id; ?>" data-toggle="modal" data-target="#editScheduleModal">
-        <i class="fa fa-edit"></i> Edit
-    </button>
-</span>
-'
-
-                                    . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . $subject . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
-                                    . '</td>';
-                            } else {
-                                echo "<td></td>";
-                            }
-                        }
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Entry Modal -->
-<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="editScheduleForm" method="POST" action="update_schedule.php">
-                  <input type="hidden" name="load_id" id="load_id">
-
-                  <!-- Faculty Dropdown -->
-                  <div class="form-group">
-                    <label for="faculty" class="control-label">Faculty</label>
-                    <select name="faculty" id="faculty" class="custom-select select2">
-                      <option value="0">All</option>
-                      <?php 
-                        $faculty_query = $conn->query("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name 
-                                                       FROM faculty 
-                                                       WHERE dept_id = '$dept_id' 
-                                                       ORDER BY CONCAT(lastname, ', ', firstname, ' ', middlename) ASC");
-                        while ($row = $faculty_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['id']; ?>">
-                        <?php echo ucwords($row['name']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Semester Dropdown -->
-                  <div class="form-group">
-                    <label for="semester" class="control-label">Semester</label>
-                    <select name="semester" id="semester" class="form-control">
-                      <option value="0" disabled>Select Semester</option>
-                      <?php 
-                        $semester_query = $conn->query("SELECT * FROM semester");
-                        while ($row = $semester_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['sem']; ?>">
-                        <?php echo ucwords($row['sem']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Course Dropdown -->
-                  <div class="form-group">
-                    <label for="course" class="control-label">Course</label>
-                    <select class="form-control" name="course" id="course" required onchange="populateYear(this.value)">
-                      <option value="0" disabled>Select Course</option>
-                      <?php 
-                        $course_query = $conn->query("SELECT * FROM courses WHERE dept_id = '$dept_id'");
-                        while ($row = $course_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['course']; ?>">
-                        <?php echo ucwords($row['course']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Year & Section Dropdown -->
-                  <div class="form-group">
-                    <label for="yrsection" class="control-label">Section</label>
-                    <select class="form-control" name="yrsection" id="yrsection" required onchange="populateSubjects()">
-                      <option value="0" disabled>Select Yr. & Sec.</option>
-                      <?php 
-                        $section_query = $conn->query("SELECT * FROM section WHERE dept_id = '$dept_id' ORDER BY year ASC, section ASC");
-                        while ($row = $section_query->fetch_array()):
-                          $yr_section_value = $row['year'] . $row['section']; 
-                          $yr_section_display = $row['year'] . " " . $row['section'];
-                      ?>
-                      <option value="<?php echo $yr_section_value; ?>">
-                        <?php echo ucwords($yr_section_display); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Subject Dropdown -->
-                  <div class="form-group">
-                    <label for="subject" class="control-label">Subject</label>
-                    <select class="form-control" name="subject" id="subject" required>
-                      <option value="" disabled>Select Subject</option>
-                      <?php 
-                        $subject_query = $conn->query("SELECT * FROM subjects WHERE dept_id = '$dept_id'");
-                        while ($row = $subject_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['subject']; ?>">
-                        <?php echo ucwords($row['subject']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Room Dropdown -->
-                  <div class="form-group">
-                    <label for="room" class="control-label">Room</label>
-                    <select class="form-control" name="room" id="room" required>
-                      <option value="" disabled>Select Room</option>
-                      <?php 
-                        $room_query = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id'");
-                        while ($row = $room_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['room_id']; ?>">
-                        <?php echo ucwords($row['room_name']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Days of the Week Dropdown -->
-                  <div class="form-group">
-                    <label for="days" class="control-label">Days of Week</label>
-                    <select class="form-control" name="days" id="days">
-                      <option value="" disabled>Select Days of Week</option>
-                      <?php 
-                        $days_query = $conn->query("SELECT * FROM days");
-                        while ($row = $days_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['days']; ?>">
-                        <?php echo ucwords($row['days']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                  <!-- Timeslot Dropdown -->
-                  <div class="form-group">
-                    <label for="timeslot_id" class="control-label">Timeslot</label>
-                    <select class="form-control" name="timeslot_id" id="timeslot_id" required>
-                      <option value="" disabled>Select Timeslot</option>
-                      <?php 
-                        $timeslot_query = $conn->query("SELECT * FROM timeslot");
-                        while ($row = $timeslot_query->fetch_array()):
-                      ?>
-                      <option value="<?php echo $row['id']; ?>">
-                        <?php echo ucwords($row['timeslot'] . " " . $row['schedule']); ?>
-                      </option>
-                      <?php endwhile; ?>
-                    </select>
-                  </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" form="editScheduleForm" class="btn btn-primary">Save Changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- Table Panel for Tuesday/Thursday -->
-	<div class="container-fluid mt-5">
-        <!-- Table Panel for Monday/Wednesday -->
-        <div class="card mb-4">
-            <div class="card-header text-center">
-            <h3>Friday/Saturday</h3>
-            <div class="d-flex justify-content-end">
-                <!-- Print Button -->
-                <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printfri">
-                    <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
-                </button>
-                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri.php">
-                    <!-- Form elements if needed -->
-                </form>
-            </div>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered waffle no-grid" id="insloadtable">
-                <thead>
-                    <tr>
-                        <th class="text-center">Time</th>
-                       <?php
-                        // PHP code to generate table headers
-                        $rooms = array();
-                        $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' order by room_id;");
-                        while ($r = $roomsdata->fetch_assoc()) {
-                            $rooms[] = $r['room_name'];
-                        }
-                        foreach ($rooms as $room) {
-                            echo '<th class="text-center">' . $room . '</th>';
-                        }
-                        ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $times = array();
-                    $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='FS' AND dept_id = '$dept_id' order by time_id;");
-                    while ($t = $timesdata->fetch_assoc()) {
-                        $times[] = $t['timeslot'];
-                    }
-
-                    foreach ($times as $time) {
-                        echo "<tr><td>$time</td>";
-                        foreach ($rooms as $room) {
-                            $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='FS'";
-                            $result = mysqli_query($conn, $query);
-                            if (mysqli_num_rows($result) > 0) {
-                                $row = mysqli_fetch_assoc($result);
-                                $course = $row['course'];
-                                $subject = $row['subjects'];
-                                $faculty = $row['faculty'];
-                                $load_id = $row['id'];
-                                $scheds = $subject . " " . $course;
-                                $faculty_name = $conn->query("SELECT concat(lastname, ', ', firstname, ' ', middlename) as name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
-                                $newSched = $scheds . " " . $faculty_name;
-                                echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . $subject . '">' 
-                                    . $newSched 
-                                    . '<br>'
-									. '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#newScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
-
-                                    . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . $subject . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
-                                    . '</td>';
-                            } else {
-                                echo "<td></td>";
-                            }
-                        }
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-
-
 	<!-- New Entry Modal -->
 <div class="modal fade" id="newScheduleModal" tabindex="-1" role="dialog" aria-labelledby="newScheduleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -960,7 +415,8 @@ $(document).ready(function() {
         </select>
     </div>
 </div>
-<input type="hidden" name="description" id="description" value="<?php echo isset($meta['sub_description']) ? htmlspecialchars($meta['sub_description']) : '' ?>">
+
+					<input type="hidden" name="description" id="description" value="<?php echo isset($meta['sub_description']) ? htmlspecialchars($meta['sub_description']) : '' ?>">
 <input type="hidden" name="total_units" id="total_units" value="<?php echo isset($meta['total_units']) ? htmlspecialchars($meta['total_units']) : '' ?>">
 <input type="hidden" name="lec_units" id="lec_units" value="<?php echo isset($meta['lec_units']) ? htmlspecialchars($meta['lec_units']) : '' ?>">
 <input type="hidden" name="lab_units" id="lab_units" value="<?php echo isset($meta['lab_units']) ? htmlspecialchars($meta['lab_units']) : '' ?>">
@@ -990,7 +446,7 @@ $(document).ready(function() {
         </select>
     </div>
 </div>
-  <div class="form-group">
+<div class="form-group">
     <div class="col-sm-12">
         <label for="specialization" class="control-label">Days of Week</label>
         <select class="form-control" name="days" id="days">
@@ -1051,26 +507,23 @@ $(document).ready(function() {
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
     <button type="submit" class="btn btn-primary">Save</button>
 </div>
+</form>
+    </div>
+  </div>
+</div>
+
+
+
+
 
 <div class="imgF" style="display: none " id="img-clone">
 			<span class="rem badge badge-primary" onclick="rem_func($(this))"><i class="fa fa-times"></i></span>
-	</div>
+	
+
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-	document.addEventListener('DOMContentLoaded', function () {
-    // Event listener for edit buttons
-    document.querySelectorAll('.edit_load').forEach(button => {
-        button.addEventListener('click', function () {
-            const loadId = this.getAttribute('data-id');
-            // Call the function to open and populate the edit modal
-            openEditModal(loadId);
-        });
-    });
-
-                
-                
-        });
-
+       
+       
 
 
 
