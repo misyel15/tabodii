@@ -197,15 +197,16 @@ $stmt->close();
                         <select name="room_name" id="edit_room" class="form-control" required>
                             <option value="" disabled>Select Room</option>
                             <?php
-                            $stmt = $conn->prepare("SELECT room_id, room_name FROM roomlist WHERE dept_id = ?");
-                            $stmt->bind_param("i", $dept_id);
-                            $stmt->execute();
-                            $room_result = $stmt->get_result();
-                            while ($row = $room_result->fetch_assoc()) {
-                                $selected = ($row['room_id'] == $record['room_id']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['room_id']) . "' $selected>" . htmlspecialchars($row['room_name']) . "</option>";
-                            }
-                            $stmt->close();
+                           $stmt = $conn->prepare("SELECT room_id, room_name FROM roomlist WHERE dept_id = ?");
+				$stmt->bind_param("i", $dept_id);
+				$stmt->execute();
+				$room_result = $stmt->get_result();
+				while ($row = $room_result->fetch_assoc()) {
+				    $selected = ($row['room_id'] == $record['room_id']) ? 'selected' : '';
+				    echo "<option value='" . htmlspecialchars($row['room_id']) . "' $selected>" . htmlspecialchars($row['room_name']) . "</option>";
+				}
+				$stmt->close();
+
                             ?>
                         </select>
                     </div>
@@ -236,14 +237,15 @@ $stmt->close();
                         <select name="timeslot" id="edit_timeslot" class="form-control" required>
                             <option value="" disabled>Select Timeslot</option>
                             <?php
-                            $stmt = $conn->prepare("SELECT id, CONCAT(timeslot, ' ', schedule) AS timeslot_info FROM timeslot");
-                            $stmt->execute();
-                            $timeslot_result = $stmt->get_result();
-                            while ($row = $timeslot_result->fetch_assoc()) {
-                                $selected = ($row['id'] == $record['timeslot_id']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['id']) . "' $selected>" . htmlspecialchars($row['timeslot_info']) . "</option>";
-                            }
-                            $stmt->close();
+                           $stmt = $conn->prepare("SELECT id, CONCAT(timeslot, ' ', schedule) AS timeslot_info FROM timeslot");
+				$stmt->execute();
+				$timeslot_result = $stmt->get_result();
+				while ($row = $timeslot_result->fetch_assoc()) {
+				    $selected = ($row['id'] == $record['timeslot_id']) ? 'selected' : '';
+				    echo "<option value='" . htmlspecialchars($row['id']) . "' $selected>" . htmlspecialchars($row['timeslot_info']) . "</option>";
+				}
+				$stmt->close();
+
                             ?>
                         </select>
                     </div>
