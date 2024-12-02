@@ -49,7 +49,7 @@ try {
     // Process XML elements
     $elements = $dom->getElementsByTagName('element');
     foreach ($elements as $element) {
-        echo 'Element value: ' . $element->nodeValue;
+        echo '' . $element->nodeValue;
     }
 } catch (Exception $e) {
     error_log('Error processing XML: ' . $e->getMessage());
