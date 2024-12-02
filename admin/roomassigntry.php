@@ -115,9 +115,8 @@ $stmt->close();
                         <label for="edit_faculty" class="control-label">Faculty</label>
                         <select name="faculty" id="edit_faculty" class="custom-select select2" required>
                             <option value="0">All</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty ORDER BY name ASC");
-			    $stmt->bind_param("i", $dept_id);
+                         $stmt = $conn->prepare("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE dept_id = ? ORDER BY name ASC");
+                            $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $faculty_result = $stmt->get_result();
                             while ($row = $faculty_result->fetch_assoc()):
