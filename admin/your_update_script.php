@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Bind parameters for the prepared statement
+        // Updated to match the number of variables passed
         $stmt->bind_param("ssssssssssi", 
             $dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id);
 
