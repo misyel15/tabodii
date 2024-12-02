@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $dept_id = $existing_dept_id;
 
-        // Prepare the UPDATE statement
+        // Prepare the UPDATE statement without using bind_param
         $stmt = $conn->prepare("UPDATE loading 
                                 SET dept_id = ?, timeslot_id = NULL, timeslot = ?, rooms = NULL, room_name = ?, faculty = ?, 
                                     course = ?, subjects = ?, days = ?, sub_description = NULL, total_units = NULL, lec_units = NULL, 
@@ -44,17 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Error preparing update statement: " . $conn->error);
         }
 
-        // Bind parameters for the prepared statement
-        // Updated to match the number of variables passed
-        $stmt->bind_param("ssssssssssi", 
-            $dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id);
+        // Execute the statement with variables directly
+        $stmt->execute([$dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id]);
 
-        if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
             echo "Schedule entry updated successfully!";
             header("Location: roomassigntry");
             exit;
         } else {
-            die("Update failed: " . $stmt->error);
+            die("Update failed or no changes made.");
         }
     } else {
         die("Error: Missing required fields.");
