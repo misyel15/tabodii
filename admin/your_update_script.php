@@ -1,12 +1,6 @@
 <?php
-session_start(); // Start the session
-include('db_connect.php');
-include 'includes/header.php';
+include "database/scheduling_db.sql"; // Ensure this file contains the database connection
 
-// Assuming the user department ID is stored in the session after login
-$dept_id = isset($_SESSION['dept_id']) ? $_SESSION['dept_id'] : null;
-?>
-<?php
 // Ensure that the form is being submitted with the POST method
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -38,21 +32,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Assuming you already have a database connection in $conn
         // Use prepared statements to prevent SQL injection
         $stmt = $conn->prepare("UPDATE loading 
-                                SET faculty = ?, semester = ?, course = ?, yrsection = ?, subjects = ?, rooms = ?, room_name = ?, 
-                                    days = ?, sub_description = ?, total_units = ?, lec_units = ?, lab_units = ?, hours = ?, 
-                                    coursedesc = ?, timeslot_id = ?, timeslot_sid = ? 
+                                SET faculty = ?, semester = ?, course = ?, yrsection = ?, subjects = ?, rooms = ?, 
+                                    room_name = ?, days = ?, sub_description = ?, total_units = ?, lec_units = ?, lab_units = ?, 
+                                    hours = ?, coursedesc = ?, timeslot_id = ?, timeslot_sid = ? 
                                 WHERE id = ?");
+        
+        // Bind parameters for the prepared statement
         $stmt->bind_param("ssssssssssssssssi", 
-            $faculty, $semester, $course, $yrsection, $subject, $room, $room_name, 
-            $days, $sub_description, $total_units, $lec_units, $lab_units, $hours, 
-            $coursedesc, $timeslot, $timeslot_sid, $edit_id);
+            $faculty, $semester, $course, $yrsection, $subject, $room, 
+            $room, $days, $sub_description, $total_units, $lec_units, $lab_units, 
+            $hours, $coursedesc, $timeslot, $timeslot_sid, $edit_id);
 
         // Execute the update query
         if ($stmt->execute()) {
             // If the update is successful, redirect back or show a success message
             echo "Schedule entry updated successfully!";
             // Optionally redirect to another page
-            header("Location: roomassigntry"); // Optionally redirect to another page
+            header("Location: roomassigntry"); // Redirect to another page (adjust URL as needed)
             exit;
         } else {
             // If there was an error with the update, display an error message
@@ -67,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Error: Missing required fields.";
     }
 } else {
-    // If the request method is not POST, redirect or show an error
+    // If the request method is not POST, show an error
     echo "Invalid request method.";
 }
 ?>
