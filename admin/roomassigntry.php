@@ -109,12 +109,13 @@ $stmt->close();
             <form id="editScheduleForm" method="POST" action="your_update_script.php"> <!-- Specify your action script -->
                 <input type="hidden" name="edit_id" id="edit_id" value="<?php echo htmlspecialchars($record['id']); ?>">
                 <input type="hidden" name="dept_id" value="<?php echo htmlspecialchars($dept_id); ?>">
+
                 <div class="modal-body">
                     <!-- Faculty Field -->
                     <div class="form-group">
                         <label for="edit_faculty" class="control-label">Faculty</label>
                         <select name="faculty" id="edit_faculty" class="custom-select select2" required>
-                            <option value="0">All</option>
+                            <option value="" disabled>Select Faculty</option>
                             <?php
                             $stmt = $conn->prepare("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE dept_id = ? ORDER BY name ASC");
                             $stmt->bind_param("i", $dept_id);
@@ -123,36 +124,39 @@ $stmt->close();
                             while ($row = $faculty_result->fetch_assoc()):
                                 $selected = ($row['id'] == $record['faculty_id']) ? 'selected' : '';
                             ?>
-                                <option value="<?php echo htmlspecialchars($row['id']); ?>" <?php echo $selected; ?>><?php echo ucwords(htmlspecialchars($row['name'])); ?></option>
-                            <?php endwhile; ?>
-                            <?php $stmt->close(); ?>
-                        </select>
-                    </div>
-                    <!-- Semester Field -->
-                    <div class="form-group">
-                        <label for="edit_semester" class="control-label">Semester</label>
-                        <select name="semester" id="edit_semester" class="form-control" required>
-                            <option value="0" disabled>Select Semester</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM semester");
-                            $stmt->execute();
-                            $semester_result = $stmt->get_result();
-                            while ($row = $semester_result->fetch_assoc()):
-                                $semester = $row['sem'];
-                                $selected = ($semester == $record['semester']) ? 'selected' : '';
-                            ?>
-                                <option value="<?php echo htmlspecialchars($semester); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($semester)); ?>
+                                <option value="<?php echo htmlspecialchars($row['id']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['name'])); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
+                    <!-- Semester Field -->
+                    <div class="form-group">
+                        <label for="edit_semester" class="control-label">Semester</label>
+                        <select name="semester" id="edit_semester" class="form-control" required>
+                            <option value="" disabled>Select Semester</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM semester");
+                            $stmt->execute();
+                            $semester_result = $stmt->get_result();
+                            while ($row = $semester_result->fetch_assoc()):
+                                $selected = ($row['sem'] == $record['semester']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['sem']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['sem'])); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
+                    </div>
+
                     <!-- Course Field -->
                     <div class="form-group">
                         <label for="edit_course" class="control-label">Course</label>
                         <select class="form-control" name="course" id="edit_course" required>
-                            <option value="0" disabled>Select Course</option>
+                            <option value="" disabled>Select Course</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM courses WHERE dept_id = ?");
                             $stmt->bind_param("i", $dept_id);
@@ -168,11 +172,12 @@ $stmt->close();
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
                     <!-- Section Field -->
                     <div class="form-group">
                         <label for="edit_yrsection" class="control-label">Section</label>
                         <select class="form-control" name="yrsection" id="edit_yrsection" required>
-                            <option value="0" disabled>Select Yr. & Sec.</option>
+                            <option value="" disabled>Select Year & Section</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM section WHERE dept_id = ? ORDER BY year ASC, section ASC");
                             $stmt->bind_param("i", $dept_id);
@@ -180,16 +185,16 @@ $stmt->close();
                             $section_result = $stmt->get_result();
                             while ($row = $section_result->fetch_assoc()):
                                 $yr_section_value = $row['year'] . $row['section'];
-                                $yr_section_display = $row['year'] . " " . $row['section'];
                                 $selected = ($yr_section_value == $record['yrsection']) ? 'selected' : '';
                             ?>
                                 <option value="<?php echo htmlspecialchars($yr_section_value); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($yr_section_display)); ?>
+                                    <?php echo ucwords(htmlspecialchars($row['year'] . ' ' . $row['section'])); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
                     <!-- Subject Field -->
                     <div class="form-group">
                         <label for="edit_subject" class="control-label">Subject</label>
@@ -201,43 +206,42 @@ $stmt->close();
                             $stmt->execute();
                             $subject_result = $stmt->get_result();
                             while ($prow = $subject_result->fetch_assoc()):
-                                $subject = $prow['subject'];
-                                $selected = ($subject == $record['subject']) ? 'selected' : '';
+                                $selected = ($prow['subject'] == $record['subject']) ? 'selected' : '';
                             ?>
-                                <option value="<?php echo htmlspecialchars($subject); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($subject)); ?>
+                                <option value="<?php echo htmlspecialchars($prow['subject']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($prow['subject'])); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
                     <!-- Room Field -->
                     <div class="form-group">
                         <label for="edit_room" class="control-label">Room</label>
                         <select class="form-control" name="room" id="edit_room" required>
-                            <option value="0" disabled selected>Select Room</option>
+                            <option value="" disabled selected>Select Room</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM roomlist WHERE dept_id = ?");
                             $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $room_result = $stmt->get_result();
                             while ($row = $room_result->fetch_assoc()):
-                                $room_id = $row['room_id'];
-                                $room_name = $row['room_name'];
-                                $selected = ($room_id == $record['room_id']) ? 'selected' : '';
+                                $selected = ($row['room_id'] == $record['room_id']) ? 'selected' : '';
                             ?>
-                                <option value="<?php echo htmlspecialchars($room_id); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($room_name)); ?>
+                                <option value="<?php echo htmlspecialchars($row['room_id']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['room_name'])); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
                     <!-- Days Field -->
                     <div class="form-group">
                         <label for="edit_days" class="control-label">Days</label>
                         <select class="form-control" name="days" id="edit_days" required>
-                            <option value="0" disabled selected>Select Days</option>
+                            <option value="" disabled selected>Select Days</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM days");
                             $stmt->execute();
@@ -252,11 +256,12 @@ $stmt->close();
                             <?php $stmt->close(); ?>
                         </select>
                     </div>
+
                     <!-- Timeslot Field -->
                     <div class="form-group">
                         <label for="edit_timeslot" class="control-label">Timeslot</label>
-                        <select class="form-control " name="timeslot" id="edit_timeslot" required>
-                            <option value="0" disabled selected>Select Timeslot</option>
+                        <select class="form-control" name="timeslot" id="edit_timeslot" required>
+                            <option value="" disabled selected>Select Timeslot</option>
                             <?php
                             $stmt = $conn->prepare("SELECT * FROM timeslot");
                             $stmt->execute();
@@ -272,6 +277,7 @@ $stmt->close();
                         </select>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -280,6 +286,7 @@ $stmt->close();
         </div>
     </div>
 </div>
+
 
 
 	<!-- New Entry Modal -->
