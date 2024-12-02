@@ -28,61 +28,61 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 </form>
             </div>
             <div class="card-body">
-                <table class="table table-bordered waffle no-grid" id="insloadtable">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Time</th>
-                            <?php
-                            // PHP code to generate table headers
-                            $rooms = array();
-                            $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' ORDER BY room_id;");
-                            while ($r = $roomsdata->fetch_assoc()) {
-                                $rooms[] = $r['room_name'];
-                            }
-                            foreach ($rooms as $room) {
-                                echo '<th class="text-center">' . htmlspecialchars($room) . '</th>';
-                            }
-                            ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $times = array();
-                        $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='MW' AND dept_id = '$dept_id' ORDER BY time_id;");
-                        while ($t = $timesdata->fetch_assoc()) {
-                            $times[] = $t['timeslot'];
-                        }
+                <table class="table table-bordered" id="loadingTable">
+    <thead>
+        <tr>
+            <th class="text-center">Time</th>
+            <th class="text-center">Room Name</th>
+            <th class="text-center">Course</th>
+            <th class="text-center">Subject</th>
+            <th class="text-center">Faculty</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Query to get all data from the loading table for a specific dept_id
+        $query = "SELECT l.*, 
+                         CONCAT(f.lastname, ', ', f.firstname, ' ', f.middlename) AS faculty_name 
+                  FROM loading l
+                  LEFT JOIN faculty f ON l.faculty = f.id
+                  WHERE l.dept_id = '$dept_id'
+                  ORDER BY l.timeslot, l.room_name";
 
-                        foreach ($times as $time) {
-                            echo "<tr><td>$time</td>";
-                            foreach ($rooms as $room) {
-                                $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='MW'";
-                                $result = mysqli_query($conn, $query);
-                                if (mysqli_num_rows($result) > 0) {
-                                    $row = mysqli_fetch_assoc($result);
-                                    $course = $row['course'];
-                                    $subject = $row['subjects'];
-                                    $faculty = $row['faculty'];
-                                    $load_id = $row['id'];
-                                    $scheds = $subject . " " . $course;
-                                    $faculty_name = $conn->query("SELECT CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
-                                    $newSched = htmlspecialchars($scheds . " " . $faculty_name);
-                                    echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '">' 
-                                        . $newSched 
-                                        . '<br>'
-                                       . '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#editScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
-    
-                                        . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
-                                        . '</td>';
-                                } else {
-                                    echo "<td></td>";
-                                }
-                            }
-                            echo "</tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
+        $result = $conn->query($query);
+
+        // Check if there are rows returned
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $time = htmlspecialchars($row['timeslot']);
+                $room = htmlspecialchars($row['room_name']);
+                $course = htmlspecialchars($row['course']);
+                $subject = htmlspecialchars($row['subjects']);
+                $faculty_name = htmlspecialchars($row['faculty_name']);
+                $load_id = $row['id'];
+
+                echo "<tr>
+                        <td class='text-center'>$time</td>
+                        <td class='text-center'>$room</td>
+                        <td class='text-center'>$course</td>
+                        <td class='text-center'>$subject</td>
+                        <td class='text-center'>$faculty_name</td>
+                        <td class='text-center'>
+                            <button class='btn btn-sm btn-primary edit_load' type='button' data-id='$load_id' data-toggle='modal' data-target='#editScheduleModal'>
+                                <i class='fa fa-edit'></i> Edit
+                            </button>
+                            <button class='btn btn-sm btn-danger delete_load' type='button' data-id='$load_id' data-scode='$subject'>
+                                <i class='fa fa-trash-alt'></i> Delete
+                            </button>
+                        </td>
+                    </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='6' class='text-center'>No data available</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
             </div>
         </div>
     </div>
