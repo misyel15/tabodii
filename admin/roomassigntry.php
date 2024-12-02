@@ -139,10 +139,11 @@ $stmt->close();
                             $stmt->execute();
                             $semester_result = $stmt->get_result();
                             while ($row = $semester_result->fetch_assoc()):
-                                $selected = ($row['sem'] == $record['semester']) ? 'selected' : '';
+                                $semester = $row['sem'];
+                                $selected = ($semester == $record['semester']) ? 'selected' : '';
                             ?>
-                                <option value="<?php echo htmlspecialchars($row['sem']); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($row['sem'])); ?>
+                                <option value="<?php echo htmlspecialchars($semester); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($semester)); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
@@ -154,8 +155,9 @@ $stmt->close();
                         <label for="edit_course" class="control-label">Course</label>
                         <select class="form-control" name="course" id="edit_course" required>
                             <option value="0" disabled>Select Course</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM courses");
+                             <?php
+                            $stmt = $conn->prepare("SELECT * FROM courses WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $course_result = $stmt->get_result();
                             while ($row = $course_result->fetch_assoc()):
@@ -175,7 +177,8 @@ $stmt->close();
                         <select class="form-control" name="subject" id="edit_subject" required>
                             <option value="" disabled>Select Subject</option>
                             <?php
-                            $stmt = $conn->prepare("SELECT * FROM subjects");
+                            $stmt = $conn->prepare("SELECT * FROM subjects WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $subject_result = $stmt->get_result();
                             while ($prow = $subject_result->fetch_assoc()):
@@ -195,15 +198,18 @@ $stmt->close();
                         <label for="edit_room" class="control-label">Room</label>
                         <select class="form-control" name="room_name" id="edit_room" required>
                             <option value="0" disabled selected>Select Room</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM roomlist");
+                          <?php
+                            $stmt = $conn->prepare("SELECT * FROM roomlist WHERE dept_id = ?");
+                            $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $room_result = $stmt->get_result();
                             while ($row = $room_result->fetch_assoc()):
-                                $selected = ($row['room_name'] == $record['room_name']) ? 'selected' : '';
+                                $room_id = $row['room_id'];
+                                $room_name = $row['room_name'];
+                                $selected = ($room_id == $record['room_id']) ? 'selected' : '';
                             ?>
-                                <option value="<?php echo htmlspecialchars($row['room_name']); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($row['room_name'])); ?>
+                                <option value="<?php echo htmlspecialchars($room_id); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($room_name)); ?>
                                 </option>
                             <?php endwhile; ?>
                             <?php $stmt->close(); ?>
@@ -235,12 +241,12 @@ $stmt->close();
                         <label for="edit_timeslot" class="control-label">Timeslot</label>
                         <select class="form-control" name="timeslot" id="edit_timeslot" required>
                             <option value="0" disabled selected>Select Timeslot</option>
-                            <?php
+                          <?php
                             $stmt = $conn->prepare("SELECT * FROM timeslot");
                             $stmt->execute();
                             $timeslot_result = $stmt->get_result();
                             while ($row = $timeslot_result->fetch_assoc()):
-                                $selected = ($row['id'] == $record['timeslot']) ? 'selected' : '';
+                                $selected = ($row['id'] == $record['timeslot_id']) ? 'selected' : '';
                             ?>
                                 <option value="<?php echo htmlspecialchars($row['id']); ?>" <?php echo $selected; ?>>
                                     <?php echo ucwords(htmlspecialchars($row['timeslot'] . " " . $row['schedule'])); ?>
