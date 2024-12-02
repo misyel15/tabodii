@@ -20,28 +20,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $days = $_POST['days'];
         $timeslot = $_POST['timeslot']; // Updated: timeslot instead of timeslot_sid
 
-        // Set other columns to NULL if not included in the form
-        $dept_id = NULL; // Not included in the form
-        $timeslot_id = NULL; // Not included in the form
-        $rooms = NULL; // Not included in the form
-        $sub_description = NULL; // Not included in the form
-        $total_units = NULL; // Not included in the form
-        $lec_units = NULL; // Not included in the form
-        $lab_units = NULL; // Not included in the form
-        $hours = NULL; // Not included in the form
-        $coursedesc = NULL; // Not included in the form
+        // Fetch the existing dept_id if not provided in the form
+        $stmt = $conn->prepare("SELECT dept_id FROM loading WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->bind_result($existing_dept_id);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Retain the existing dept_id
+        $dept_id = $existing_dept_id;
 
         // Use prepared statements to prevent SQL injection
         $stmt = $conn->prepare("UPDATE loading 
-                                SET dept_id = ?, timeslot_id = ?, timeslot = ?, rooms = ?, room_name = ?, faculty = ?, 
-                                    course = ?, subjects = ?, days = ?, sub_description = ?, total_units = ?, lec_units = ?, 
-                                    lab_units = ?, hours = ?, coursedesc = ?, timeslot_sid = ?, semester = ? 
+                                SET dept_id = ?, timeslot_id = NULL, timeslot = ?, rooms = NULL, room_name = ?, faculty = ?, 
+                                    course = ?, subjects = ?, days = ?, sub_description = NULL, total_units = NULL, lec_units = NULL, 
+                                    lab_units = NULL, hours = NULL, coursedesc = NULL, timeslot_sid = NULL, semester = ? 
                                 WHERE id = ?");
         
         // Bind parameters for the prepared statement
-        $stmt->bind_param("sssssssssssssssssi", 
-            $dept_id, $timeslot_id, $timeslot, $rooms, $room_name, $faculty, $course, $subject, $days, 
-            $sub_description, $total_units, $lec_units, $lab_units, $hours, $coursedesc, $timeslot, $semester, $id);
+        $stmt->bind_param("sssssssssi", 
+            $dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id);
 
         // Execute the update query
         if ($stmt->execute()) {
