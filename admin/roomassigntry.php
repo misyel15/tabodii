@@ -117,6 +117,7 @@ $stmt->close();
                             <option value="0">All</option>
                             <?php
                             $stmt = $conn->prepare("SELECT *, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty ORDER BY name ASC");
+			    $stmt->bind_param("i", $dept_id);
                             $stmt->execute();
                             $faculty_result = $stmt->get_result();
                             while ($row = $faculty_result->fetch_assoc()):
