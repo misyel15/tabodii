@@ -1,6 +1,15 @@
 <?php
+session_start();
 //include "database/scheduling_db.sql"; // Ensure this file contains the database connection
 include "db_connect.php";
+
+// Assuming you store the department ID in the session during login
+$dept_id = $_SESSION['dept_id'] ?? null; // Get the department ID from the session
+
+// Check if dept_id is set
+if (!$dept_id) {
+    echo "<script>alert('Department ID is not set. Please log in again.');</script>";
+}
 // Ensure that the form is being submitted with the POST method
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
