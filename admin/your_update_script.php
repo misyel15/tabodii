@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $dept_id = $existing_dept_id;
 
+        // Prepare the UPDATE statement
         $stmt = $conn->prepare("UPDATE loading 
                                 SET dept_id = ?, timeslot_id = NULL, timeslot = ?, rooms = NULL, room_name = ?, faculty = ?, 
                                     course = ?, subjects = ?, days = ?, sub_description = NULL, total_units = NULL, lec_units = NULL, 
@@ -43,7 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Error preparing update statement: " . $conn->error);
         }
 
-        $stmt->bind_param("sssssssssi", $dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id);
+        // Bind parameters for the prepared statement
+        $stmt->bind_param("ssssssssssi", 
+            $dept_id, $timeslot, $room_name, $faculty, $course, $subject, $days, $semester, $id);
+
         if ($stmt->execute()) {
             echo "Schedule entry updated successfully!";
             header("Location: roomassigntry");
@@ -51,12 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             die("Update failed: " . $stmt->error);
         }
-
     } else {
         die("Error: Missing required fields.");
     }
 } else {
     die("Invalid request method.");
 }
-
 ?>
