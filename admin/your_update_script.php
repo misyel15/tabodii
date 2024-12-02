@@ -20,8 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $days = $_POST['days'];
         $timeslot = $_POST['timeslot']; // Updated: timeslot instead of timeslot_sid
 
+        // Automatically fetch dept_id based on faculty
+        // Assuming you have a 'faculty' table with a 'dept_id' column
+        $stmt = $conn->prepare("SELECT dept_id FROM faculty WHERE id = ?");
+        $stmt->bind_param("i", $faculty);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            $dept_id = $row['dept_id'];  // Automatically get the department ID based on faculty
+        } else {
+            echo "Error: Faculty not found.";
+            exit;
+        }
+
         // Set other columns to NULL if not included in the form
-        $dept_id = NULL; // Not included in the form
         $timeslot_id = NULL; // Not included in the form
         $rooms = NULL; // Not included in the form
         $sub_description = NULL; // Not included in the form
