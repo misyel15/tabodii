@@ -210,10 +210,24 @@ $stmt->close();
                         </select>
                     </div>
 
-                    <!-- Days Field -->
+                      <!-- Days Field -->
                     <div class="form-group">
                         <label for="edit_days" class="control-label">Days</label>
-                        <input type="text" name="days" id="edit_days" class="form-control" value="<?php echo htmlspecialchars($record['days']); ?>" required>
+                        <select class="form-control" name="days" id="edit_days" required>
+                            <option value="0" disabled selected>Select Days</option>
+                            <?php
+                            $stmt = $conn->prepare("SELECT * FROM days");
+                            $stmt->execute();
+                            $days_result = $stmt->get_result();
+                            while ($row = $days_result->fetch_assoc()):
+                                $selected = ($row['days'] == $record['days']) ? 'selected' : '';
+                            ?>
+                                <option value="<?php echo htmlspecialchars($row['days']); ?>" <?php echo $selected; ?>>
+                                    <?php echo ucwords(htmlspecialchars($row['days'])); ?>
+                                </option>
+                            <?php endwhile; ?>
+                            <?php $stmt->close(); ?>
+                        </select>
                     </div>
 
                     <!-- Timeslot Field -->
