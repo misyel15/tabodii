@@ -1,6 +1,4 @@
 <?php
-
-
 session_start();
 include('db_connect.php');
 include 'includes/header.php';
@@ -28,235 +26,213 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 </form>
             </div>
             <div class="card-body">
-                <table class="table table-bordered" id="loadingTable">
-    <thead>
-        <tr>
-            <th class="text-center">Time</th>
-            <th class="text-center">Room Name</th>
-            <th class="text-center">Course</th>
-            <th class="text-center">Subject</th>
-            <th class="text-center">Faculty</th>
-            <th class="text-center">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        // Query to get all data from the loading table for a specific dept_id
-        $query = "SELECT l.*, 
-                         CONCAT(f.lastname, ', ', f.firstname, ' ', f.middlename) AS faculty_name 
-                  FROM loading l
-                  LEFT JOIN faculty f ON l.faculty = f.id
-                  WHERE l.dept_id = '$dept_id'
-                  ORDER BY l.timeslot, l.room_name";
+                <table class="table table-bordered waffle no-grid" id="insloadtable">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Time</th>
+                            <?php
+                            // PHP code to generate table headers
+                            $rooms = array();
+                            $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' ORDER BY room_id;");
+                            while ($r = $roomsdata->fetch_assoc()) {
+                                $rooms[] = $r['room_name'];
+                            }
+                            foreach ($rooms as $room) {
+                                echo '<th class="text-center">' . htmlspecialchars($room) . '</th>';
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $times = array();
+                        $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='MW' AND dept_id = '$dept_id' ORDER BY time_id;");
+                        while ($t = $timesdata->fetch_assoc()) {
+                            $times[] = $t['timeslot'];
+                        }
 
-        $result = $conn->query($query);
-
-        // Check if there are rows returned
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $time = htmlspecialchars($row['timeslot']);
-                $room = htmlspecialchars($row['room_name']);
-                $course = htmlspecialchars($row['course']);
-                $subject = htmlspecialchars($row['subjects']);
-                $faculty_name = htmlspecialchars($row['faculty_name']);
-                $load_id = $row['id'];
-
-                echo "<tr>
-                        <td class='text-center'>$time</td>
-                        <td class='text-center'>$room</td>
-                        <td class='text-center'>$course</td>
-                        <td class='text-center'>$subject</td>
-                        <td class='text-center'>$faculty_name</td>
-                        <td class='text-center'>
-                            <button class='btn btn-sm btn-primary edit_load' type='button' data-id='$load_id' data-toggle='modal' data-target='#editScheduleModal'>
-                                <i class='fa fa-edit'></i> Edit
-                            </button>
-                            <button class='btn btn-sm btn-danger delete_load' type='button' data-id='$load_id' data-scode='$subject'>
-                                <i class='fa fa-trash-alt'></i> Delete
-                            </button>
-                        </td>
-                    </tr>";
-            }
-        } else {
-            echo "<tr><td colspan='6' class='text-center'>No data available</td></tr>";
-        }
-        ?>
-    </tbody>
-</table>
+                        foreach ($times as $time) {
+                            echo "<tr><td>$time</td>";
+                            foreach ($rooms as $room) {
+                                $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='MW'";
+                                $result = mysqli_query($conn, $query);
+                                if (mysqli_num_rows($result) > 0) {
+                                    $row = mysqli_fetch_assoc($result);
+                                    $course = $row['course'];
+                                    $subject = $row['subjects'];
+                                    $faculty = $row['faculty'];
+                                    $load_id = $row['id'];
+                                    $scheds = $subject . " " . $course;
+                                    $faculty_name = $conn->query("SELECT CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
+                                    $newSched = htmlspecialchars($scheds . " " . $faculty_name);
+                                    echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '">' 
+                                        . $newSched 
+                                        . '<br>'
+                                        . '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#newScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
+                                        . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . htmlspecialchars($subject) . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
+                                        . '</td>';
+                                } else {
+                                    echo "<td></td>";
+                                }
+                            }
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-<?php
-// Assume $load_id and $dept_id are defined and sanitized
-$stmt = $conn->prepare("SELECT * FROM loading WHERE id = ?");
-$stmt->bind_param("i", $load_id);
-$stmt->execute();
-$record = $stmt->get_result()->fetch_assoc();
-$stmt->close();
-?>
 
-
-
-
-
-<!-- Edit Entry Modal -->
-<div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule Entry</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+    <!-- Table Panel for Tuesday/Thursday -->
+	<div class="container-fluid mt-5">
+        <!-- Table Panel for Monday/Wednesday -->
+        <div class="card mb-4">
+            <div class="card-header text-center">
+            <h3>Tuesday/Thursday</h3>
+            <div class="d-flex justify-content-end">
+                <!-- Print Button -->
+                <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printtth">
+                    <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
+                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth.php">
+                    <!-- Form elements if needed -->
+                </form>
             </div>
-            <form id="editScheduleForm" method="POST" action="your_update_script.php"> <!-- Specify your action script -->
-                <!-- Hidden Fields -->
-                <input type="hidden" name="id" id="edit_id" value="<?php echo htmlspecialchars($record['id']); ?>">
-                <input type="hidden" name="dept_id" value="<?php echo htmlspecialchars($dept_id); ?>">
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered waffle no-grid" id="insloadtable">
+                <thead>
+                    <tr>
+                        <th class="text-center">Time</th>
+                       <?php
+                        // PHP code to generate table headers
+                        $rooms = array();
+                        $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' order by room_id;");
+                        while ($r = $roomsdata->fetch_assoc()) {
+                            $rooms[] = $r['room_name'];
+                        }
+                        foreach ($rooms as $room) {
+                            echo '<th class="text-center">' . $room . '</th>';
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $times = array();
+                    $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='TTH' AND dept_id = '$dept_id' order by time_id;");
+                    while ($t = $timesdata->fetch_assoc()) {
+                        $times[] = $t['timeslot'];
+                    }
 
-                <div class="modal-body">
-                    <!-- Faculty Field -->
-                    <div class="form-group">
-                        <label for="edit_faculty" class="control-label">Faculty</label>
-                        <select name="faculty" id="edit_faculty" class="custom-select select2" required>
-                            <option value="" disabled>Select Faculty</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT id, CONCAT(lastname, ', ', firstname, ' ', middlename) AS name FROM faculty WHERE dept_id = ? ORDER BY name ASC");
-                            $stmt->bind_param("i", $dept_id);
-                            $stmt->execute();
-                            $faculty_result = $stmt->get_result();
-                            while ($row = $faculty_result->fetch_assoc()) {
-                                $selected = ($row['id'] == $record['faculty']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['id']) . "' $selected>" . htmlspecialchars($row['name']) . "</option>";
+                    foreach ($times as $time) {
+                        echo "<tr><td>$time</td>";
+                        foreach ($rooms as $room) {
+                            $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='TTH'";
+                            $result = mysqli_query($conn, $query);
+                            if (mysqli_num_rows($result) > 0) {
+                                $row = mysqli_fetch_assoc($result);
+                                $course = $row['course'];
+                                $subject = $row['subjects'];
+                                $faculty = $row['faculty'];
+                                $load_id = $row['id'];
+                                $scheds = $subject . " " . $course;
+                                $faculty_name = $conn->query("SELECT concat(lastname, ', ', firstname, ' ', middlename) as name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
+                                $newSched = $scheds . " " . $faculty_name;
+                                echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . $subject . '">' 
+                                    . $newSched 
+                                    . '<br>'
+									. '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#newScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
+
+                                    . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . $subject . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
+                                    . '</td>';
+                            } else {
+                                echo "<td></td>";
                             }
-                            $stmt->close();
-                            ?>
-                        </select>
-                    </div>
+                        }
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                    <!-- Semester Field -->
-                    <div class="form-group">
-                        <label for="edit_semester" class="control-label">Semester</label>
-                        <select name="semester" id="edit_semester" class="form-control" required>
-                            <option value="" disabled>Select Semester</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT sem FROM semester");
-                            $stmt->execute();
-                            $semester_result = $stmt->get_result();
-                            while ($row = $semester_result->fetch_assoc()) {
-                                $selected = ($row['sem'] == $record['semester']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['sem']) . "' $selected>" . htmlspecialchars($row['sem']) . "</option>";
+    <!-- Table Panel for Tuesday/Thursday -->
+	<div class="container-fluid mt-5">
+        <!-- Table Panel for Monday/Wednesday -->
+        <div class="card mb-4">
+            <div class="card-header text-center">
+            <h3>Friday/Saturday</h3>
+            <div class="d-flex justify-content-end">
+                <!-- Print Button -->
+                <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printfri">
+                    <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
+                </button>
+                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri.php">
+                    <!-- Form elements if needed -->
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered waffle no-grid" id="insloadtable">
+                <thead>
+                    <tr>
+                        <th class="text-center">Time</th>
+                       <?php
+                        // PHP code to generate table headers
+                        $rooms = array();
+                        $roomsdata = $conn->query("SELECT * FROM roomlist WHERE dept_id = '$dept_id' order by room_id;");
+                        while ($r = $roomsdata->fetch_assoc()) {
+                            $rooms[] = $r['room_name'];
+                        }
+                        foreach ($rooms as $room) {
+                            echo '<th class="text-center">' . $room . '</th>';
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $times = array();
+                    $timesdata = $conn->query("SELECT * FROM timeslot WHERE schedule='FS' AND dept_id = '$dept_id' order by time_id;");
+                    while ($t = $timesdata->fetch_assoc()) {
+                        $times[] = $t['timeslot'];
+                    }
+
+                    foreach ($times as $time) {
+                        echo "<tr><td>$time</td>";
+                        foreach ($rooms as $room) {
+                            $query = "SELECT * FROM loading WHERE timeslot='$time' AND room_name='$room' AND days='FS'";
+                            $result = mysqli_query($conn, $query);
+                            if (mysqli_num_rows($result) > 0) {
+                                $row = mysqli_fetch_assoc($result);
+                                $course = $row['course'];
+                                $subject = $row['subjects'];
+                                $faculty = $row['faculty'];
+                                $load_id = $row['id'];
+                                $scheds = $subject . " " . $course;
+                                $faculty_name = $conn->query("SELECT concat(lastname, ', ', firstname, ' ', middlename) as name FROM faculty WHERE id=$faculty")->fetch_assoc()['name'];
+                                $newSched = $scheds . " " . $faculty_name;
+                                echo '<td class="text-center content" data-id="' . $load_id . '" data-scode="' . $subject . '">' 
+                                    . $newSched 
+                                    . '<br>'
+									. '<span><button class="btn btn-sm btn-primary edit_load" type="button" data-id="' . $load_id . '" data-toggle="modal" data-target="#newScheduleModal"><i class="fa fa-edit"></i> Edit</button></span>'
+
+                                    . '<span><button class="btn btn-sm btn-danger delete_load" type="button" data-id="' . $load_id . '" data-scode="' . $subject . '"><i class="fa fa-trash-alt"></i> Delete</button></span>'
+                                    . '</td>';
+                            } else {
+                                echo "<td></td>";
                             }
-                            $stmt->close();
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- Course Field -->
-                    <div class="form-group">
-                        <label for="edit_course" class="control-label">Course</label>
-                        <select name="course" id="edit_course" class="form-control" required>
-                            <option value="" disabled>Select Course</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT course FROM courses WHERE dept_id = ?");
-                            $stmt->bind_param("i", $dept_id);
-                            $stmt->execute();
-                            $course_result = $stmt->get_result();
-                            while ($row = $course_result->fetch_assoc()) {
-                                $selected = ($row['course'] == $record['course']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['course']) . "' $selected>" . htmlspecialchars($row['course']) . "</option>";
-                            }
-                            $stmt->close();
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- Subject Field -->
-                    <div class="form-group">
-                        <label for="edit_subject" class="control-label">Subject</label>
-                        <select name="subject" id="edit_subject" class="form-control" required>
-                            <option value="" disabled>Select Subject</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT subject FROM subjects WHERE dept_id = ?");
-                            $stmt->bind_param("i", $dept_id);
-                            $stmt->execute();
-                            $subject_result = $stmt->get_result();
-                            while ($row = $subject_result->fetch_assoc()) {
-                                $selected = ($row['subject'] == $record['subject']) ? 'selected' : '';
-                                echo "<option value='" . htmlspecialchars($row['subject']) . "' $selected>" . htmlspecialchars($row['subject']) . "</option>";
-                            }
-                            $stmt->close();
-                            ?>
-                        </select>
-                    </div>
-
-                    <!-- Room Field -->
-                    <div class="form-group">
-                        <label for="edit_room" class="control-label">Room</label>
-                        <select name="room_name" id="edit_room" class="form-control" required>
-                            <option value="" disabled>Select Room</option>
-                            <?php
-                           $stmt = $conn->prepare("SELECT room_id, room_name FROM roomlist WHERE dept_id = ?");
-				$stmt->bind_param("i", $dept_id);
-				$stmt->execute();
-				$room_result = $stmt->get_result();
-				while ($row = $room_result->fetch_assoc()) {
-				    $selected = ($row['room_id'] == $record['room_id']) ? 'selected' : '';
-				    echo "<option value='" . htmlspecialchars($row['room_id']) . "' $selected>" . htmlspecialchars($row['room_name']) . "</option>";
-				}
-				$stmt->close();
-
-                            ?>
-                        </select>
-                    </div>
-
-                      <!-- Days Field -->
-                    <div class="form-group">
-                        <label for="edit_days" class="control-label">Days</label>
-                        <select class="form-control" name="days" id="edit_days" required>
-                            <option value="0" disabled selected>Select Days</option>
-                            <?php
-                            $stmt = $conn->prepare("SELECT * FROM days");
-                            $stmt->execute();
-                            $days_result = $stmt->get_result();
-                            while ($row = $days_result->fetch_assoc()):
-                                $selected = ($row['days'] == $record['days']) ? 'selected' : '';
-                            ?>
-                                <option value="<?php echo htmlspecialchars($row['days']); ?>" <?php echo $selected; ?>>
-                                    <?php echo ucwords(htmlspecialchars($row['days'])); ?>
-                                </option>
-                            <?php endwhile; ?>
-                            <?php $stmt->close(); ?>
-                        </select>
-                    </div>
-
-                    <!-- Timeslot Field -->
-                    <div class="form-group">
-                        <label for="edit_timeslot" class="control-label">Timeslot</label>
-                        <select name="timeslot" id="edit_timeslot" class="form-control" required>
-                            <option value="" disabled>Select Timeslot</option>
-                            <?php
-                           $stmt = $conn->prepare("SELECT id, CONCAT(timeslot, ' ', schedule) AS timeslot_info FROM timeslot");
-				$stmt->execute();
-				$timeslot_result = $stmt->get_result();
-				while ($row = $timeslot_result->fetch_assoc()) {
-				    $selected = ($row['id'] == $record['timeslot_id']) ? 'selected' : '';
-				    echo "<option value='" . htmlspecialchars($row['id']) . "' $selected>" . htmlspecialchars($row['timeslot_info']) . "</option>";
-				}
-				$stmt->close();
-
-                            ?>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                        }
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -396,8 +372,7 @@ $stmt->close();
         </select>
     </div>
 </div>
-
-					<input type="hidden" name="description" id="description" value="<?php echo isset($meta['sub_description']) ? htmlspecialchars($meta['sub_description']) : '' ?>">
+<input type="hidden" name="description" id="description" value="<?php echo isset($meta['sub_description']) ? htmlspecialchars($meta['sub_description']) : '' ?>">
 <input type="hidden" name="total_units" id="total_units" value="<?php echo isset($meta['total_units']) ? htmlspecialchars($meta['total_units']) : '' ?>">
 <input type="hidden" name="lec_units" id="lec_units" value="<?php echo isset($meta['lec_units']) ? htmlspecialchars($meta['lec_units']) : '' ?>">
 <input type="hidden" name="lab_units" id="lab_units" value="<?php echo isset($meta['lab_units']) ? htmlspecialchars($meta['lab_units']) : '' ?>">
@@ -427,7 +402,7 @@ $stmt->close();
         </select>
     </div>
 </div>
-<div class="form-group">
+  <div class="form-group">
     <div class="col-sm-12">
         <label for="specialization" class="control-label">Days of Week</label>
         <select class="form-control" name="days" id="days">
@@ -488,23 +463,26 @@ $stmt->close();
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
     <button type="submit" class="btn btn-primary">Save</button>
 </div>
-</form>
-    </div>
-  </div>
-</div>
-
-
-
-
 
 <div class="imgF" style="display: none " id="img-clone">
 			<span class="rem badge badge-primary" onclick="rem_func($(this))"><i class="fa fa-times"></i></span>
-	
-
+	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
-       
-       
+	document.addEventListener('DOMContentLoaded', function () {
+    // Event listener for edit buttons
+    document.querySelectorAll('.edit_load').forEach(button => {
+        button.addEventListener('click', function () {
+            const loadId = this.getAttribute('data-id');
+            // Call the function to open and populate the edit modal
+            openEditModal(loadId);
+        });
+    });
+
+                
+                
+        });
+
 
 
 
