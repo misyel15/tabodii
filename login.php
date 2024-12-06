@@ -206,18 +206,18 @@ include 'headers.php';
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto"> <!-- Use me-auto to align items to the left -->
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="index.php">Home</a>
+                        <a class="nav-link button-style" href="index">Home</a>
                     </li>
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="about.php">About</a>
+                        <a class="nav-link button-style" href="about">About</a>
                     </li>
                     <li class="nav-item dropdown" style="margin-left:20px;">
                         <a class="nav-link dropdown-toggle button-style" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Login
                         </a>
                       <div class="dropdown-menu" aria-labelledby="navbarDropdown " style="margin-left: -60%;">
-                      <center>     <a class="dropdown-item" href="home.php"><i class="fas fa-user-secret"></i> Instructor</a>
-                            <a class="dropdown-item" href="./admin/login.php"><i class="fas fa-user-cog"></i> Admin</a></center>
+                      <center>     <a class="dropdown-item" href="home"><i class="fas fa-user-secret"></i> Instructor</a>
+                            <a class="dropdown-item" href="./admin/login"><i class="fas fa-user-cog"></i> Admin</a></center>
                         </div>
                     </li>
                 </ul>
