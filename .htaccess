@@ -1,4 +1,7 @@
+# Enable Rewrite Engine
 RewriteEngine On
+
+# Redirect requests to files without ".php"
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^\.]+)$ $1.php [NC,L]
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
