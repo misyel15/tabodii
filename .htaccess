@@ -1,7 +1,9 @@
-# Enable Rewrite Engine
 RewriteEngine On
+RewriteBase /sched/
 
-# Redirect requests to files without ".php"
+# Ensure the file or directory does not already exist
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
+
+# Rewrite URLs without extensions to .php files
 RewriteRule ^(.*)$ $1.php [L]
