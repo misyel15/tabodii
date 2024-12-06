@@ -209,7 +209,7 @@ include 'headers.php';
                         <a class="nav-link button-style" href="index.php">Home</a>
                     </li>
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="about.php">About</a>
+                        <a class="nav-link button-style" href="About.php">About</a>
                     </li>
                     <li class="nav-item dropdown" style="margin-left:20px;">
                         <a class="nav-link dropdown-toggle button-style" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
