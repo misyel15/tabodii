@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /sched/
+RewriteBase //
 
 # Ensure the file or directory does not already exist
 RewriteCond %{REQUEST_FILENAME} !-f
