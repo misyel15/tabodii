@@ -241,9 +241,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        </div>
                      
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
-                                <a href="https://mccfacultyscheduling.com/login.php" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
+                                <a href="https://mccfacultyscheduling.com/login" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
                                   <center>  
-                                            <a href="form.php" class="forgot-password-btn">Forgot Password?</a>
+                                            <a href="form" class="forgot-password-btn">Forgot Password?</a>
                                        
                                     </center> 
        
@@ -320,7 +320,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 text: response.message,
                                 showConfirmButton: true
                             }).then(() => {
-                                window.location.href = 'home.php';
+                                window.location.href = 'home';
                             });
                         } else if (response.status === 'locked') {
                             Swal.fire({
