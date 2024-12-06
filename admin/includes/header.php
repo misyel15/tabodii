@@ -182,7 +182,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         
-                   <li><a href="home"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+<li><a href="home"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
 <li><a href="courses"><i class="fas fa-book"></i>Course</a></li>
 <li><a href="subjects"><i class="fas fa-book"></i>Subject</a></li>
 <li><a href="faculty"><i class="fas fa-users"></i>Faculty</a></li>
@@ -196,14 +196,14 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
     <a class="js-arrow" href="#">
         <i class="fas fa-copy"></i>Other Reports</a>
     <ul class="list-unstyled navbar__sub-list js-sub-list">
-        <li><a href="class_sched.php"><i class="fas fa-calendar"></i>Class Schedule</a></li>
-        <li><a href="load.php"><i class="fas fa-tasks"></i>Instructor's Load</a></li>
-        <li><a href="summary.php"><i class="fas fa-file-alt"></i>Summary</a></li>
-        <li><a href="export.php"><i class="fas fa-file-export"></i>Export CSV</a></li>
+        <li><a href="class_sched"><i class="fas fa-calendar"></i>Class Schedule</a></li>
+        <li><a href="load"><i class="fas fa-tasks"></i>Instructor's Load</a></li>
+        <li><a href="summary"><i class="fas fa-file-alt"></i>Summary</a></li>
+        <li><a href="export"><i class="fas fa-file-export"></i>Export CSV</a></li>
     </ul>
 </li>
 
-<li><a href="users.php"><i class="fas fa-user"></i>User</a></li>
+<li><a href="users"><i class="fas fa-user"></i>User</a></li>
 
                         </li>
                        
