@@ -3,26 +3,20 @@ session_start();
 include 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Initialize session variables for login attempts if not already set
-    if (!isset($_SESSION['login_attempts'])) {
-        $_SESSION['login_attempts'] = 0;
-        $_SESSION['lockout_time'] = 0;
+    // Check if user is locked out due to failed attempts
+    if ($_SESSION['login_attempts'] >= 3) {
+        // Check if lock time has expired (5 seconds)
+        if (time() - $_SESSION['lock_time'] < 5) {
+            echo 6; // Locked out due to too many attempts
+            exit;
+        } else {
+            // Reset attempts after lockout period
+            $_SESSION['login_attempts'] = 0;
+            $_SESSION['lock_time'] = null;
+        }
     }
 
-    $max_attempts = 3; // Maximum allowed failed login attempts
-    $lockout_duration = 1 * 60; // Lockout duration in seconds (5 minutes)
-
-    // Check if the user is currently locked out
-    if ($_SESSION['login_attempts'] >= $max_attempts && time() < $_SESSION['lockout_time']) {
-        $remaining_time = $_SESSION['lockout_time'] - time();
-        echo json_encode([
-            'status' => 'locked',
-            'message' => 'Too many failed attempts. Please try again in ' . ceil($remaining_time / 60) . ' minutes.'
-        ]);
-        exit;
-    }
-
-    // Sanitize and retrieve user inputs
+    // Sanitize user input
     $username = htmlspecialchars(trim($_POST['username']));
     $password = htmlspecialchars(trim($_POST['password']));
     $course = htmlspecialchars(trim($_POST['course']));
@@ -41,63 +35,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-
     // Prepare and execute login query
-    $stmt = $conn->prepare("
-    SELECT id, name, username, course, dept_id, type, password 
-    FROM users 
-    WHERE username = ?
-    ");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+$stmt = $conn->prepare("
+SELECT id, name, username, course, dept_id, type, password 
+FROM users 
+WHERE username = ?
+");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $user_data = $result->fetch_assoc();
-        $stored_hashed_password = $user_data['password'];
+if ($result->num_rows > 0) {
+$user_data = $result->fetch_assoc();
+$stored_hashed_password = $user_data['password'];
 
-        // Verify the password using password_verify
-        if (password_verify($password, $stored_hashed_password)) {
-            // Verify course matches
-            if ($user_data['course'] === $course) {
-                // Reset login attempts on successful login
-                $_SESSION['login_attempts'] = 0;
-                $_SESSION['lockout_time'] = 0;
+// Verify the password using password_verify
+if (password_verify($password, $stored_hashed_password)) {
+    if ($user_data['course'] === $course) {
+        $_SESSION['user_id'] = $user_data['id'];
+        $_SESSION['dept_id'] = $user_data['dept_id'];
+        $_SESSION['username'] = htmlspecialchars($user_data['username']);
+        $_SESSION['name'] = htmlspecialchars($user_data['name']);
+        $_SESSION['login_type'] = $user_data['type'];
 
-                // Store user session data
-                $_SESSION['user_id'] = $user_data['id'];
-                $_SESSION['dept_id'] = $user_data['dept_id'];
-                $_SESSION['username'] = htmlspecialchars($user_data['username']);
-                $_SESSION['name'] = htmlspecialchars($user_data['name']);
-                $_SESSION['login_type'] = $user_data['type'];
+        // Optionally store latitude and longitude
+        $_SESSION['latitude'] = $latitude;
+        $_SESSION['longitude'] = $longitude;
 
-                // Optionally, store geolocation data
-                $_SESSION['latitude'] = $latitude;
-                $_SESSION['longitude'] = $longitude;
-
-                // Check if the user is an admin (user type != 1)
-                if ($_SESSION['login_type'] != 1) {
-                    session_unset(); // Log out if not an admin
-                    echo json_encode(['status' => 'error', 'message' => 'Access Denied']);
-                } else {
-                    echo json_encode(['status' => 'success', 'message' => 'Login Successful']);
-                }
-            } else {
-                echo json_encode(['status' => 'error', 'message' => 'Course Mismatch']);
-            }
+        if ($_SESSION['login_type'] != 1) {
+            session_unset();
+            echo 2; // User is not of the correct type
         } else {
-            // Increment login attempts and handle lockout
-            $_SESSION['login_attempts']++;
-            if ($_SESSION['login_attempts'] >= $max_attempts) {
-                $_SESSION['lockout_time'] = time() + $lockout_duration;
-            }
-            echo json_encode(['status' => 'error', 'message' => 'Invalid username or password']);
+            echo 1; // Login successful
         }
+
+        // Reset login attempts
+        $_SESSION['login_attempts'] = 0;
+    } else {
+        echo 4; // Course mismatch
     }
-    exit;
+} else {
+    echo 3; // Incorrect password
+    $_SESSION['login_attempts'] += 1;
+
+    // Lockout after 3 failed attempts
+    if ($_SESSION['login_attempts'] >= 3) {
+        $_SESSION['lock_time'] = time();
+    }
+}
+} else {
+echo 3; // Username not found
+$_SESSION['login_attempts'] += 1;
+
+// Lockout after 3 failed attempts
+if ($_SESSION['login_attempts'] >= 3) {
+    $_SESSION['lock_time'] = time();
+}
+}
+exit;
+
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -143,6 +141,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <style>
+    .cookie-consent-content button {
+    background-color: #4caf50; /* Green for Accept */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px; /* Space between buttons */
+}
+
+.cookie-consent-content button#declineCookie {
+    background-color: #f44336; /* Red for Decline */
+}
+
+.cookie-consent-content button:hover {
+    opacity: 0.8;
+}
+
+  .cookie-consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 9999;
+  display: block;
+}
+
+.cookie-consent-banner .cookie-consent-content {
+  display: inline-block;
+}
+
+.cookie-consent-banner button {
+  margin-left: 10px;
+  padding: 5px 15px;
+  cursor: pointer;
+}
 
 
     body.animsition {
@@ -235,21 +273,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
  
                         
-                          <!-- Updated HTML for hCaptcha -->
-                          <div class="form-group">
+                        <!-- Updated HTML for hCaptcha -->
+                       <div class="form-group">
                       <div class="h-captcha" data-sitekey="0a809f3c-8a90-4672-9d9a-0508be54f062"></div> <!-- Replace with your actual site key -->
                        </div>
-                     
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
-                                <a href="https://mccfacultyscheduling.com/login.php" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
+                                <a href="https://mccfacultyscheduling.com/login" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
                                   <center>  
-                                            <a href="form.php" class="forgot-password-btn">Forgot Password?</a>
+                                            <a href="forgot" class="forgot-password-btn">Forgot Password?</a>
                                        
                                     </center> 
-       
+         
 
                             </form>
-                 
+                                                   <div id="cookieConsent" class="cookie-consent-banner">
+    <div class="cookie-consent-content">
+        <p>We use cookies to improve your experience. By using our website, you consent to our use of cookies. <a href="#">Learn more</a></p>
+        <button id="acceptCookie">Accept</button>
+        <button id="declineCookie">Decline</button>
+    </div>
+</div>
                         </div>
                     </div>
                 </div>
@@ -289,44 +332,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
 
         // Handle form submission
-        $(document).ready(function() {
+ $(document).ready(function() {
     $('#login-form').on('submit', function(e) {
         e.preventDefault();
 
-        // Get geolocation
+        // Get the user's geolocation
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
+                // Capture latitude and longitude
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
 
-                // Serialize form data with geolocation
+                // Add geolocation data to the form data
                 const formData = $('#login-form').serialize() + '&latitude=' + latitude + '&longitude=' + longitude;
 
-                // Disable button and show loading
-                $('#login-form button[type="submit"]').attr('disabled', true).html('Logging in...');
+                // Disable submit button and show loading text
+                $('#login-form button[type="submit"]').attr('disabled', 'disabled').html('Logging in...');
 
-                // Submit form data via AJAX
                 $.ajax({
                     type: 'POST',
-                    url: 'login.php',
+                    url: 'login.php', // Ensure this is the correct PHP file
                     data: formData,
                     success: function(resp) {
-                        const response = JSON.parse(resp);
-
-                        if (response.status === 'success') {
+                        if (resp == 1) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Login Successful',
-                                text: response.message,
+                                text: 'Redirecting...',
                                 showConfirmButton: true
                             }).then(() => {
-                                window.location.href = 'home.php';
+                                location.href = 'home';
                             });
-                        } else if (response.status === 'locked') {
+                        } else if (resp == 2) {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Too Many Attempts',
-                                text: response.message
+                                title: 'Access Denied',
+                                text: 'You do not have permission to access this area.'
+                            });
+                        } else if (resp == 4) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Course Mismatch',
+                                text: 'The selected course does not match your account.'
                             });
                         } else if (resp == 5) {
                             Swal.fire({
@@ -334,15 +381,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 title: 'CAPTCHA Failed',
                                 text: 'Please complete the CAPTCHA.'
                             });
+                        } else if (resp == 6) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Too Many Attempts',
+                                text: 'Please wait 5 seconds before trying again.'
+                            });
                         } else {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Login Failed',
-                                text: response.message
+                                text: 'Username or password is incorrect.'
                             });
                         }
-
-                        // Re-enable button
+                        // Re-enable submit button
                         $('#login-form button[type="submit"]').removeAttr('disabled').html('Login');
                     },
                     error: function() {
@@ -351,12 +403,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             title: 'Error',
                             text: 'There was an error processing your request. Please try again.'
                         });
-
-                        // Re-enable button
+                        // Re-enable submit button
                         $('#login-form button[type="submit"]').removeAttr('disabled').html('Login');
                     }
                 });
             }, function(error) {
+                // Handle error if user denies geolocation
                 Swal.fire({
                     icon: 'error',
                     title: 'Geolocation Error',
@@ -364,6 +416,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 });
             });
         } else {
+            // If geolocation is not supported
             Swal.fire({
                 icon: 'error',
                 title: 'Geolocation Not Supported',
@@ -371,6 +424,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         }
     });
+});
+
+// Check if the user has already accepted or declined cookies
+if (!document.cookie.split(';').some((item) => item.trim().startsWith('cookie_consent='))) {
+    // Display the consent banner
+    document.getElementById("cookieConsent").style.display = "block";
+}
+
+// When the user accepts the cookies
+document.getElementById("acceptCookie").addEventListener('click', function() {
+    // Set a cookie to remember the user's consent
+    document.cookie = "cookie_consent=true; max-age=" + 60*60*24*365 + "; path=/"; // Cookie expires in 1 year
+    document.getElementById("cookieConsent").style.display = "none"; // Hide the banner
+});
+
+// When the user declines the cookies
+document.getElementById("declineCookie").addEventListener('click', function() {
+    // Simply hide the banner without setting the cookie
+    document.getElementById("cookieConsent").style.display = "none"; // Hide the banner
 });
 
     </script>
