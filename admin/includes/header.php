@@ -101,22 +101,17 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
     align-items: center;
 }
 
-/* Account dropdown positioning */
-.account-dropdown {
-    position: absolute;
-    right: 0;
-    top: 100%; /* Position below the account item */
-    margin-top: 10px; /* Space between account item and dropdown */
-    min-width: 200px; /* Set minimum width for dropdown */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
-    z-index: 1000; /* Ensure dropdown is above other elements */
-}
+
 
 /* Ensure image and content align properly */
 .image img {
     border-radius: 50%;
     width: 50px;
     height: 40px;
+}
+.account-dropdown__footer a:hover {
+    color: black; /* Changes the text color to black */
+    background-color: green; /* Optional: if you want to change the background */
 }
 
 </style>
@@ -148,7 +143,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
 <li><a href="courses.php"><i class="fas fa-book"></i>Course</a></li>
 <li><a href="subjects.php"><i class="fas fa-book"></i>Subject</a></li>
 <li><a href="faculty.php"><i class="fas fa-users"></i>Faculty</a></li>
-<li><a href="room.php"><i class="fas fa-door-open"></i>Room</a></li>
+<li><a href="room.php"><i class="fas fa-clipboard-list"></i>Room</a></li>
 <li><a href="timeslot.php"><i class="fas fa-clock"></i>Timeslot</a></li>
 <li><a href="section.php"><i class="fas fa-users"></i>Section</a></li>
 <li><a href="roomassigntry.php"><i class="fas fa-clipboard-list"></i>Room Assignment</a></li>
@@ -187,28 +182,28 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         
-                   <li><a href="home"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-<li><a href="courses"><i class="fas fa-book"></i>Course</a></li>
-<li><a href="subjects"><i class="fas fa-book"></i>Subject</a></li>
-<li><a href="faculty"><i class="fas fa-users"></i>Faculty</a></li>
-<li><a href="room"><i class="fas fa-door-open"></i>Room</a></li>
-<li><a href="timeslot"><i class="fas fa-clock"></i>Timeslot</a></li>
-<li><a href="section"><i class="fas fa-users"></i>Section</a></li>
-<li><a href="roomassigntry"><i class="fas fa-clipboard-list"></i>Room Assignment</a></li>
-<li><a href="roomsched"><i class="fas fa-calendar-alt"></i>Room Schedule</a></li>
+                   <li><a href="home.php"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+<li><a href="courses.php"><i class="fas fa-book"></i>Course</a></li>
+<li><a href="subjects.php"><i class="fas fa-book"></i>Subject</a></li>
+<li><a href="faculty.php"><i class="fas fa-users"></i>Faculty</a></li>
+<li><a href="room.php"><i class="fas fa-clipboard-list"></i>Room</a></li>
+<li><a href="timeslot.php"><i class="fas fa-clock"></i>Timeslot</a></li>
+<li><a href="section.php"><i class="fas fa-users"></i>Section</a></li>
+<li><a href="roomassigntry.php"><i class="fas fa-clipboard-list"></i>Room Assignment</a></li>
+<li><a href="roomsched.php"><i class="fas fa-calendar-alt"></i>Room Schedule</a></li>
 
 <li class="has-sub">
     <a class="js-arrow" href="#">
         <i class="fas fa-copy"></i>Other Reports</a>
     <ul class="list-unstyled navbar__sub-list js-sub-list">
-        <li><a href="class_sched"><i class="fas fa-calendar"></i>Class Schedule</a></li>
-        <li><a href="load"><i class="fas fa-tasks"></i>Instructor's Load</a></li>
-        <li><a href="summary"><i class="fas fa-file-alt"></i>Summary</a></li>
-        <li><a href="export"><i class="fas fa-file-export"></i>Export CSV</a></li>
+        <li><a href="class_sched.php"><i class="fas fa-calendar"></i>Class Schedule</a></li>
+        <li><a href="load.php"><i class="fas fa-tasks"></i>Instructor's Load</a></li>
+        <li><a href="summary.php"><i class="fas fa-file-alt"></i>Summary</a></li>
+        <li><a href="export.php"><i class="fas fa-file-export"></i>Export CSV</a></li>
     </ul>
 </li>
 
-<li><a href="users"><i class="fas fa-user"></i>User</a></li>
+<li><a href="users.php"><i class="fas fa-user"></i>User</a></li>
 
                         </li>
                        
@@ -256,7 +251,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
         <?php endwhile; ?>
 
         <div class="notifi__footer">
-            <a href="all_notification">All notifications</a>
+            <a href="all_notification.php">All notifications</a>
         </div>
     </div>
 </div>
@@ -293,15 +288,39 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
                                 </div>
 
        
-            <div class="account-dropdown__footer">
-                <a href="ajax.php?action=logout">
-                    <i class="zmdi zmdi-power"></i>Logout
-                </a>
-            </div>
+                                <div class="account-dropdown__footer">
+    <a href="javascript:void(0);" id="logout-link">
+        <i class="zmdi zmdi-power"></i>Logout
+    </a>
+</div>
         </div>
     </div>
 </div>
 
+<!-- Include SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Add a click event to the logout link
+    document.getElementById("logout-link").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent the default behavior of the link
+
+        // Show SweetAlert confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to log out?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, log out',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the logout URL if confirmed
+                window.location.href = 'ajax.php?action=logout';
+            }
+        });
+    });
+</script>
 <script>
     $('#manage_my_account').click(function(){
         uni_modal("Manage Account", "manage_user.php?id=<?php echo isset($_SESSION['login_id']) ? $_SESSION['login_id'] : '0'; ?>&mtype=own");
@@ -380,7 +399,7 @@ function markAsRead(notificationId) {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 // Reload the notification bell or redirect to all notifications page after marking as read
-                window.location.href = 'view_notif?id=' + encodeURIComponent(notificationId); // Properly handled redirection
+                window.location.href = 'view_notif.php?id=' + encodeURIComponent(notificationId); // Properly handled redirection
             } else {
                 console.error('Error marking notification as read');
             }
