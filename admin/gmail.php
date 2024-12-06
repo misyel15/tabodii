@@ -308,6 +308,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit" name="reset_password" class="btn btn-primary w-100">Reset Password</button>
                 </form>
             <?php endif; ?>
+
+                 <p class="mt-3 mb-1">
+                <a href="index.php">Login</a>
+            </p>
         </div>
     </div>
 </div>
