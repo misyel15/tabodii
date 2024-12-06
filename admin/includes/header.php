@@ -139,10 +139,10 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <li class="has-sub">
-                        <li><a href="home.php"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-<li><a href="courses.php"><i class="fas fa-book"></i>Course</a></li>
-<li><a href="subjects.php"><i class="fas fa-book"></i>Subject</a></li>
-<li><a href="faculty.php"><i class="fas fa-users"></i>Faculty</a></li>
+                        <li><a href="home"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+<li><a href="courses"><i class="fas fa-book"></i>Course</a></li>
+<li><a href="subjects"><i class="fas fa-book"></i>Subject</a></li>
+<li><a href="faculty"><i class="fas fa-users"></i>Faculty</a></li>
 <li><a href="room.php"><i class="fas fa-clipboard-list"></i>Room</a></li>
 <li><a href="timeslot.php"><i class="fas fa-clock"></i>Timeslot</a></li>
 <li><a href="section.php"><i class="fas fa-users"></i>Section</a></li>
