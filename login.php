@@ -1,9 +1,7 @@
 <?php 
 include 'style.php'; 
 include 'headers.php'; 
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,9 +28,50 @@ include 'headers.php';
   <link href="css/responsive.css" rel="stylesheet" />
 
   <style>
+    .cookie-consent-content button {
+    background-color: #4caf50; /* Green for Accept */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px; /* Space between buttons */
+}
+
+.cookie-consent-content button#declineCookie {
+    background-color: #f44336; /* Red for Decline */
+}
+
+.cookie-consent-content button:hover {
+    opacity: 0.8;
+}
+
+  .cookie-consent-banner {
+  position: fixed;
+  bottom: 10px;
+  left: 0%;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 9999;
+  display: block;
+}
+
+.cookie-consent-banner .cookie-consent-content {
+  display: inline-block;
+}
+
+.cookie-consent-banner button {
+  margin-left: 10px;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
     /* Custom Styles */
     .text-gradient {
-      background: linear-gradient(315deg, #1e30f3 0%, #e21e80 100%);
+      background: linear-gradient(315deg, #1e30f3 0%, #6CBAA5 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -50,7 +89,8 @@ include 'headers.php';
     }
 
   .header_section {
-  background-color: #eae6f5;
+    background: linear-gradient(315deg, #C8A182 0%, #67574A 100%);
+
   position: sticky;
   top: 0;
   z-index: 1000; /* Ensures the header stays above other elements */
@@ -79,7 +119,7 @@ include 'headers.php';
 
     .logo-text {
       font-size: 1.0rem;
-      color: #333;
+      color: white;
       margin-left: 10px;
       font-weight: bold;
     }
@@ -90,21 +130,22 @@ include 'headers.php';
     }
 
     .navbar-nav .nav-link:hover {
-      background-color: #1e30f3;
+      background-color: black;
       color: #fff !important;
       border-radius: 5px;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .navbar-nav .dropdown-item:hover {
-      background-color: #e21e80;
+      background-color: black;
       color: #fff !important;
       border-radius: 50px;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .nav-link.button-style {
-      background-color: blueviolet;
+      background: linear-gradient(to right, #80DFE1, #6CBAA5);
+
       color: #fff !important;
       border-radius: 50px;
       padding: 10px 20px;
@@ -113,7 +154,7 @@ include 'headers.php';
     }
 
     .nav-link.button-style:hover {
-      background-color: #e21e80;
+      background-color: gray;
       color: #fff !important;
     }
 
@@ -141,6 +182,7 @@ include 'headers.php';
       .navbar-nav .nav-item {
         margin-left: 0; /* Reset margin for mobile */
         margin-bottom: 10px; /* Add some spacing between items */
+        
       }
     }
   </style>
@@ -151,7 +193,7 @@ include 'headers.php';
 <header class="header_section">
     <div class="container">
         <nav class="navbar navbar-expand-lg custom_nav-container">
-            <a class="navbar-brand" href="index">
+            <a class="navbar-brand" href="index.php">
                 <div class="logo-container">
                     <img src="mcclogo.jpg" width="50px" height="50px" alt="System Logo" class="img-thumbnail rounded-circle">
                     <span class="logo-text ms-3">MFSS</span>
@@ -164,18 +206,18 @@ include 'headers.php';
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto"> <!-- Use me-auto to align items to the left -->
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="index">Home</a>
+                        <a class="nav-link button-style" href="index.php">Home</a>
                     </li>
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="about">About</a>
+                        <a class="nav-link button-style" href="about.php">About</a>
                     </li>
                     <li class="nav-item dropdown" style="margin-left:20px;">
                         <a class="nav-link dropdown-toggle button-style" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Login
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="home"><i class="fas fa-user-secret"></i> Instructor</a>
-                            <a class="dropdown-item" href="./admin/login"><i class="fas fa-user-cog"></i> Admin</a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown " style="margin-left: -60%;">
+                      <center>     <a class="dropdown-item" href="home.php"><i class="fas fa-user-secret"></i> Instructor</a>
+                            <a class="dropdown-item" href="./admin/login.php"><i class="fas fa-user-cog"></i> Admin</a></center>
                         </div>
                     </li>
                 </ul>
@@ -255,11 +297,17 @@ include 'headers.php';
         </div>
       </div>
     </div>
- 
+    <div id="cookieConsent" class="cookie-consent-banner">
+        <div class="cookie-consent-content">
+        <p>We use cookies to improve your experience. By using our website, you consent to our use of cookies. <a href="#">Learn more</a></p>
+        <button id="acceptCookie">Accept</button>
+        <button id="declineCookie">Decline</button>
+    </div>
+</div>
       <br>
       <div class="footer-links">
         
-  <center>    <p class="mt-3">&copy; 2024 000Madridejos Community College. All Rights Reserved.</p></center> 
+  <center>    <p class="mt-3">&copy; 2024 Madridejos Community College. All Rights Reserved.</p></center> 
     </div>
   </footer>
 
@@ -272,6 +320,26 @@ include 'headers.php';
     $(document).ready(function () {
       $('.carousel').carousel();
     });
+    
+// Check if the user has already accepted or declined cookies
+if (!document.cookie.split(';').some((item) => item.trim().startsWith('cookie_consent='))) {
+    // Display the consent banner
+    document.getElementById("cookieConsent").style.display = "block";
+}
+
+// When the user accepts the cookies
+document.getElementById("acceptCookie").addEventListener('click', function() {
+    // Set a cookie to remember the user's consent
+    document.cookie = "cookie_consent=true; max-age=" + 60*60*24*365 + "; path=/"; // Cookie expires in 1 year
+    document.getElementById("cookieConsent").style.display = "none"; // Hide the banner
+});
+
+// When the user declines the cookies
+document.getElementById("declineCookie").addEventListener('click', function() {
+    // Simply hide the banner without setting the cookie
+    document.getElementById("cookieConsent").style.display = "none"; // Hide the banner
+});
+
   </script>
 </body>
 
