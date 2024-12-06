@@ -140,12 +140,12 @@ include 'includes/head.php';
         <p class="login-box-msg">You forgot your password? Here you can easily retrieve a new password.</p>
     <div class="d-grid gap-2 mt-4">
         <!-- First Button -->
-        <a href="forgot.php" class="btn btn-primary btn-block mb-2" style="background-color: #007bff; border-radius: 30px; font-size: 1rem;">
+        <a href="forgot" class="btn btn-primary btn-block mb-2" style="background-color: #007bff; border-radius: 30px; font-size: 1rem;">
             Sent Via Email
         </a>
 
         <!-- Second Button -->
-        <a href="gmail.php" class="btn btn-secondary btn-block mb-2" style="background-color: #6c757d; border-radius: 30px; font-size: 1rem;">
+        <a href="gmail" class="btn btn-secondary btn-block mb-2" style="background-color: #6c757d; border-radius: 30px; font-size: 1rem;">
             Sent OTP
         </a>
 
