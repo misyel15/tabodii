@@ -233,7 +233,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </select>
                                     </div>
                                 </div>
- 
+ <div class="form-group">
+    <input type="checkbox" id="terms" name="terms" required>
+    <label for="terms">I agree to the 
+        <a href="terms.php" target="_blank">Terms and Conditions</a>
+    </label>
+ </div>
                         
                           <!-- Updated HTML for hCaptcha -->
                           <div class="form-group">
