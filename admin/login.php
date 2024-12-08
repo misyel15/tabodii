@@ -233,18 +233,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </select>
                                     </div>
                                 </div>
- <div class="form-group">
-    <input type="checkbox" id="terms" name="terms" required>
-    <label for="terms">I agree to the 
-        <a href="terms.php" target="_blank">Terms and Conditions</a>
-    </label>
- </div>
+ 
                         
                           <!-- Updated HTML for hCaptcha -->
                           <div class="form-group">
                       <div class="h-captcha" data-sitekey="0a809f3c-8a90-4672-9d9a-0508be54f062"></div> <!-- Replace with your actual site key -->
                        </div>
-                     
+                     <div class="form-group">
+    <input type="checkbox" id="terms" name="terms" required>
+    <label for="terms">I agree to the 
+        <a href="terms.php" target="_blank">Terms and Conditions</a>
+    </label>
+                     </div>
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
                                 <a href="https://mccfacultyscheduling.com/login" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
                                   <center>  
