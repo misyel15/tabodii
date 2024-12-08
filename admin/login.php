@@ -377,7 +377,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     });
 });
-
+$('#terms-link').on('click', function(e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Terms and Conditions',
+        html: 'Your detailed terms and conditions go here...',
+        icon: 'info',
+        confirmButtonText: 'Close'
+    });
+});
+        
     </script>
 </body>
 </html>
