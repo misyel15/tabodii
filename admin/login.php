@@ -239,12 +239,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                           <div class="form-group">
                       <div class="h-captcha" data-sitekey="0a809f3c-8a90-4672-9d9a-0508be54f062"></div> <!-- Replace with your actual site key -->
                        </div>
-                     <div class="form-group">
+                     <!-- Terms and Conditions Checkbox -->
+<div class="form-group">
     <input type="checkbox" id="terms" name="terms" required>
     <label for="terms">I agree to the 
-        <a href="terms.php" target="_blank">Terms and Conditions</a>
+        <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a>
     </label>
-                     </div>
+</div>
+
+<!-- Modal Structure for Terms and Conditions -->
+<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Replace this with your actual Terms and Conditions content -->
+        <h4>Welcome to Our Application</h4>
+        <p>
+          By using this system, you agree to comply with and be bound by the following terms and conditions of use. 
+          These terms, together with our privacy policy, govern our relationship with you concerning this platform.
+        </p>
+        <h5>1. User Responsibilities</h5>
+        <p>You agree to use the system responsibly, maintain confidentiality of login details, and adhere to security policies.</p>
+        <h5>2. Prohibited Activities</h5>
+        <p>Users are prohibited from attempting to hack, compromise, or gain unauthorized access to any part of the system.</p>
+        <h5>3. Modifications</h5>
+        <p>We reserve the right to modify these terms at any time. Continued use of the platform implies acceptance of the revised terms.</p>
+        <p>For a complete list of terms, please contact the system administrator.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
                                 <a href="https://mccfacultyscheduling.com/login" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
                                   <center>  
