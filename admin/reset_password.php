@@ -109,6 +109,9 @@ if (isset($_POST['submit'])) {
   <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <style>
+       body {
+    font-family: 'Times New Roman', serif;
+}
     #logo-img {
         width: 5em;
         height: 5em;
