@@ -66,8 +66,23 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
             max-width: 98%;
             margin: 0 auto;
         }
-        .card {
-            background: lightgray;
+        .card1 {
+            background: #b1b0b0;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+        .card2 {
+            background: #99cc99;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+        .card3 {
+            background: #009DD1;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+        .card4 {
+            background: #cc585c;
             color: #000;
             margin-bottom: 1rem;
         }
@@ -121,10 +136,10 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3">
-                    <div class="card" style="box-shadow: 0 0 5px black;">
+                    <div class="card1" style="box-shadow: 0 0 5px black;">
                         <div class="card-body">
                             <div class="icon" style="text-align:right;">
-                                <i class="fa fa-4x fa-school text-secondary" aria-hidden="true"></i>
+                                <i class="fa fa-4x fa-school text-white" aria-hidden="true"></i>
                             </div>
                             <?php
                                 $sql = "SELECT * FROM roomlist WHERE dept_id = ?";
@@ -137,15 +152,15 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                             ?> 
                             <p>Number of Rooms</p>                
                             <hr>
-                            <a class="medium text-secondary stretched-link" href="room">View Details</a>
+                            <a class="medium text-white stretched-link" href="room">View Details</a>
                         </div>
                     </div>              
                 </div>
                 <div class="col-lg-3">
-                    <div class="card" style="box-shadow: 0 0 5px black;">
+                    <div class="card2" style="box-shadow: 0 0 5px black;">
                         <div class="card-body">
                             <div class="icon" style="text-align:right;">
-                                <i class="fa fa-4x fa-user-tie text-secondary" aria-hidden="true"></i>
+                                <i class="fa fa-4x fa-user-tie text-white" aria-hidden="true"></i>
                             </div>
                             <?php
                                 $sql = "SELECT * FROM faculty WHERE dept_id = ?";
@@ -158,15 +173,15 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                             ?>
                             <p>Number of Instructors</p>  
                             <hr>
-                            <a class="medium text-secondary stretched-link" href="faculty">View Details</a>
+                            <a class="medium text-white  stretched-link" href="faculty">View Details</a>
                         </div>
                     </div>              
                 </div>
                 <div class="col-lg-3">
-                    <div class="card" style="box-shadow: 0 0 5px black;">
+                    <div class="card3" style="box-shadow: 0 0 5px black;">
                         <div class="card-body">
                             <div class="icon" style="text-align:right;">
-                                <i class="fa fa-4x fa-book-open text-secondary" aria-hidden="true"></i>
+                                <i class="fa fa-4x fa-book-open text-white" aria-hidden="true"></i>
                             </div>
                             <?php
                                 $sql = "SELECT * FROM subjects WHERE dept_id = ?";
@@ -179,15 +194,15 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                             ?>
                             <p>Number of Subjects</p>  
                             <hr>
-                            <a class="medium text-secondary stretched-link" href="subjects">View Details</a>
+                            <a class="medium text-white  stretched-link" href="subjects">View Details</a>
                         </div>
                     </div>              
                 </div>
                 <div class="col-lg-3">
-                    <div class="card" style="box-shadow: 0 0 5px black;">
+                    <div class="card4" style="box-shadow: 0 0 5px black;">
                         <div class="card-body">
                             <div class="icon" style="text-align:right;">
-                                <i class="fa fa-4x fa-graduation-cap text-secondary" aria-hidden="true"></i>
+                                <i class="fa fa-4x fa-graduation-cap text-white" aria-hidden="true"></i>
                             </div>
                             <?php
                                 $sql = "SELECT * FROM courses WHERE dept_id = ?";
@@ -200,7 +215,7 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                             ?>
                             <p>Number of Courses</p>  
                             <hr>
-                            <a class="medium text-secondary stretched-link" href="courses">View Details</a>
+                            <a class="medium text-white  stretched-link" href="courses">View Details</a>
                         </div>
                     </div>              
                 </div>
