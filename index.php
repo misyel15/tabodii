@@ -16,6 +16,7 @@
 <style>
   body {
     background: #80808045;
+    font-family: 'Times New Roman', serif;
   }
 
   .modal-dialog.large {
@@ -109,7 +110,8 @@
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
-              <h2 class="text-center mb-4">Instructor Load's</h2>
+          <h2 class="text-center mb-4" style="font-family: 'Times New Roman', Times, serif;">Instructor Load's</h2>
+
             <table class="table table-bordered table-condensed table-hover" id="insloadtable">
               <thead>
                 <tr>
