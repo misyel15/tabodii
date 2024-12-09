@@ -503,46 +503,46 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
 
                                     //     });
-                                    // $(document).on('click', '.edit_load', function () {
-                                    //     const loadId = $(this).data('id'); // Get the data-id from the clicked button
-                                    //     $.ajax({
-                                    //         url: 'fetch_load.php', // Your PHP script to fetch data
-                                    //         method: 'GET',
-                                    //         data: { id: loadId },
-                                    //         dataType: 'json',
-                                    //         success: function (response) {
-                                    //             if (response.success) {
-                                    //                 // Populate inputs with the fetched data
-                                    //                 $('#load_id').val(response.data.id);
-                                    //                 $('#faculty').val(response.data.faculty).trigger('change'); // Trigger change for select2
-                                    //                 $('#semester').val(response.data.semester);
-                                    //                 $('#course').val(response.data.course).trigger('change');
-                                    //                 $('#yrsection').val(response.data.yrsection).trigger('change');
-                                    //                 $('#subject').val(response.data.subject).trigger('change');
-                                    //                 $('#room').val(response.data.room).trigger('change');
-                                    //                 $('#days').val(response.data.days);
-                                    //                 $('#timeslot_id').val(response.data.timeslot_id).trigger('change');
-                                    //                 // Populate hidden inputs
-                                    //                 $('#description').val(response.data.description);
-                                    //                 $('#total_units').val(response.data.total_units);
-                                    //                 $('#lec_units').val(response.data.lec_units);
-                                    //                 $('#lab_units').val(response.data.lab_units);
-                                    //                 $('#hours').val(response.data.hours);
-                                    //                 $('#timeslot_sid').val(response.data.timeslot_sid);
-                                    //             } else {
-                                    //                 alert('Failed to fetch data.');
-                                    //             }
-                                    //         },
-                                    //         error: function () {
-                                    //             alert('An error occurred while fetching data.');
-                                    //         }
-                                    //     });
-                                    // });
+                                     $(document).on('click', '.edit_load', function () {
+                                       const loadId = $(this).data('id'); // Get the data-id from the clicked button
+                                         $.ajax({
+                                         url: 'fetch_load.php', // Your PHP script to fetch data
+                                         method: 'GET',
+                                             data: { id: loadId },
+                                            dataType: 'json',
+                                           success: function (response) {
+                                               if (response.success) {
+                                                   // Populate inputs with the fetched data
+                                                    $('#load_id').val(response.data.id);
+                                                     $('#faculty').val(response.data.faculty).trigger('change'); // Trigger change for select2
+                                                     $('#semester').val(response.data.semester);
+                                                    $('#course').val(response.data.course).trigger('change');
+                                                    $('#yrsection').val(response.data.yrsection).trigger('change');
+                                                    $('#subject').val(response.data.subject).trigger('change');
+                                                   $('#room').val(response.data.room).trigger('change');
+                                                    $('#days').val(response.data.days);
+                                                    $('#timeslot_id').val(response.data.timeslot_id).trigger('change');
+                                                   // Populate hidden inputs
+                                                 $('#description').val(response.data.description);
+                                                    $('#total_units').val(response.data.total_units);
+                                                    $('#lec_units').val(response.data.lec_units);
+                                                   $('#lab_units').val(response.data.lab_units);
+                                                    $('#hours').val(response.data.hours);
+                                                    $('#timeslot_sid').val(response.data.timeslot_sid);
+                                                } else {
+                                                    alert('Failed to fetch data.');
+                                                }
+                                            },
+                                             error: function () {
+                                                 alert('An error occurred while fetching data.');
+                                            }
+                                        });
+                                     });
 
-                                    // $('#newScheduleModal').on('hidden.bs.modal', function () {
-                                    //     $(this).find('form')[0].reset(); // Reset the form
-                                    //     $(this).find('.select2').val(null).trigger('change'); // Reset select2 fields
-                                    // });
+                                     $('#newScheduleModal').on('hidden.bs.modal', function () {
+                                         $(this).find('form')[0].reset(); // Reset the form
+                                         $(this).find('.select2').val(null).trigger('change'); // Reset select2 fields
+                                     });
 
 
                                     $('#newScheduleModal').on('hide.bs.modal', function () {
