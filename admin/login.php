@@ -290,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Custom CSS for Modal Width -->
 <style>
 .custom-modal-dialog {
-    max-width: 20%; /* Adjust width as needed */
+    max-width: 35%; /* Adjust width as needed */
 }
 
 .custom-modal {
