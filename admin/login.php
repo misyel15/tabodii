@@ -307,15 +307,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Modal Structure for Terms and Conditions -->
 <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content custom-modal">
+            <div class="modal-header custom-modal-header">
                 <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <h4>Terms and Conditions for MCC Faculty Scheduling System</h4>
+            <div class="modal-body custom-modal-body">
+                <h4 class="custom-modal-title">Terms and Conditions for MCC Faculty Scheduling System</h4>
                 
                 <h5>1. System Usage</h5>
                 <p>Faculty members and administrators must use the system solely for scheduling, faculty loading, and room management purposes. Unauthorized or unrelated activities are strictly prohibited.</p>
@@ -338,12 +338,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h5>7. Modifications and Updates</h5>
                 <p>MCC reserves the right to update these terms and conditions as needed. Continued use of the system after updates indicates acceptance of the revised terms.</p>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer custom-modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
                                 <a href="https://mccfacultyscheduling.com/login" class="au-btn au-btn--block au-btn--green m-b-20" style="text-align:center;">Home</a>
