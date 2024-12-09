@@ -239,18 +239,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
  
+                        <!-- Terms and Conditions Checkbox -->
+<div class="form-group terms-container">
+<input type="checkbox" id="terms" name="terms" required>
+    <label for="terms" class="terms-label">
+        I agree to the 
+        <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a>
+    </label>
+    
+</div>
                         
                           <!-- Updated HTML for hCaptcha -->
                           <div class="form-group">
                       <div class="h-captcha" data-sitekey="0a809f3c-8a90-4672-9d9a-0508be54f062"></div> <!-- Replace with your actual site key -->
                        </div>
-<!-- Terms and Conditions Checkbox -->
-<div class="form-group">
-    <input type="checkbox" id="terms" name="terms" required>
-    <label for="terms">I agree to the 
-        <a href="#" data-toggle="modal" data-target="#termsModal">Terms and Conditions</a>
-    </label>
-</div>
+
+
 
 <!-- Modal Structure for Terms and Conditions -->
 <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
@@ -295,6 +299,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Custom CSS for Modal Width -->
 <style>
+    .terms-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjust spacing */
+}
+
+.terms-label {
+    margin: 0;
+}
+
 .custom-modal-dialog {
     max-width: 35%; /* Adjust width as needed */
 }
@@ -309,6 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     padding: 15px;
 }
 </style>
+
 
 
 
