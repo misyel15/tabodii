@@ -45,7 +45,7 @@ function sendemail($email, $reset_token)
         <head>
             <style>
                 body {
-                    font-family: Arial, sans-serif;
+                    font-family: 'Times New Roman', serif;
                     background-color: #f4f4f4;
                 }
                 .container {
