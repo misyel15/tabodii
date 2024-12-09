@@ -23,6 +23,9 @@
   ?>
 <style>
   body {
+    font-family: 'Times New Roman', serif;
+}
+  body {
     width: 100%;
     height: calc(100%);
     position: fixed;
@@ -87,26 +90,26 @@
   <div id="login" class="col-md-4">
     <div class="card position-relative"> <!-- Added position-relative -->
    
-     
       <div class="card-body">
         <form id="login-form">
           <div class="login-logo text-center">
             <a>
               <img src="mcclogo.jpg" style="width:150px; height:90px;" alt="CoolAdmin">
             </a>
-            <h3> Welcome To Mcc Faculty Scheduling</h3>
+            <h3 style="font-family: 'Times New Roman', Times, serif;"> Welcome To Mcc Faculty Scheduling</h3>
           </div>
           <div class="form-group">
-            <label for="id_no" class="control-label">Please enter your Faculty ID No.</label>
+            <label for="id_no" class="control-label" style="font-family: 'Times New Roman', Times, serif;">Please enter your Faculty ID No.</label>
             <input type="number" id="id_no" name="id_no" class="form-control">
           </div>
-          <center><button class="btn-sm btn-block btn-wave col-md-4 btn-primary">Login</button></center>
+          <center><button class="btn-sm btn-block btn-wave col-md-4 btn-primary" style="font-family: 'Times New Roman', Times, serif;">Login</button></center>
         </form>
         <br>
       </div>
     </div>
   </div>
 </main>
+
 
 
 
