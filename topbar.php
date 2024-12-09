@@ -9,12 +9,13 @@
     <style>
         /* General styling for the navbar */
         .custom-navbar {
-            background-color: #f8f9fa; /* Light gray for contrast */
+            background-color: #8B0000; /* Light gray for contrast */
             border-bottom: 2px solid #dee2e6; /* Subtle bottom border */
             padding: 10px 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            color:white;
         }
 
         /* Branding logo and text */
@@ -92,18 +93,18 @@
 </head>
 <body>
 
-<div class="custom-navbar">
-    <a class="navbar-brand">
+<div class="custom-navbar" style="color: white;">
+    <a class="navbar-brand" style="color: white;">
         <img src="mcclogo.jpg" alt="Logo">
         MFSS
     </a>
-    <ul class="navbar-nav">
+    <ul class="navbar-nav" style="color: white;">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="account_settings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fa fa-user"></i> <?php echo $_SESSION['login_lastname'] ?>
+            <a class="nav-link dropdown-toggle" href="#" id="account_settings" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+                <i class="fa fa-user"></i> <?php echo $_SESSION['login_name'] ?>
             </a>
             <div class="dropdown-menu" aria-labelledby="account_settings">
-                <a class="dropdown-item" href="#" onclick="confirmLogout()">
+                <a class="dropdown-item" href="#" onclick="confirmLogout()" >
                     <center><i class="fa fa-power-off"></i> Logout</center>
                 </a>
             </div>
