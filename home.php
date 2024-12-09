@@ -49,7 +49,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #eae6f5;
+  background: url('backs.jpg') no-repeat center center fixed;
     background-size: cover; /* Cover the entire section */
     background-position: center; /* Center the image */
     opacity: 0.5; /* Adjust transparency (0.0 to 1.0) */
