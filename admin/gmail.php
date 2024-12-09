@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         /* Main layout adjustments */
         body {
             background-color: #f4f4f4;
-            font-family: 'Source Sans Pro', sans-serif;
+          font-family: 'Times New Roman', serif;
             display: flex;
             justify-content: center;
             align-items: center;
