@@ -454,7 +454,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                             <option value="" disabled selected>Select Timeslot</option>
                                             <?php
                                             // Query to fetch timeslots based on department
-                                            $sql = "SELECT * FROM timeslot  WHERE dept_id = '$dept_id'";
+                                            $sql = "SELECT * FROM timeslot";
                                             $query = $conn->query($sql);
 
                                             // Loop through the fetched rows and populate the dropdown
@@ -503,6 +503,57 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
 
                                     //     });
+                                    // $(document).on('click', '.edit_load', function () {
+                                    //     const loadId = $(this).data('id'); // Get the data-id from the clicked button
+                                    //     $.ajax({
+                                    //         url: 'fetch_load.php', // Your PHP script to fetch data
+                                    //         method: 'GET',
+                                    //         data: { id: loadId },
+                                    //         dataType: 'json',
+                                    //         success: function (response) {
+                                    //             if (response.success) {
+                                    //                 // Populate inputs with the fetched data
+                                    //                 $('#load_id').val(response.data.id);
+                                    //                 $('#faculty').val(response.data.faculty).trigger('change'); // Trigger change for select2
+                                    //                 $('#semester').val(response.data.semester);
+                                    //                 $('#course').val(response.data.course).trigger('change');
+                                    //                 $('#yrsection').val(response.data.yrsection).trigger('change');
+                                    //                 $('#subject').val(response.data.subject).trigger('change');
+                                    //                 $('#room').val(response.data.room).trigger('change');
+                                    //                 $('#days').val(response.data.days);
+                                    //                 $('#timeslot_id').val(response.data.timeslot_id).trigger('change');
+                                    //                 // Populate hidden inputs
+                                    //                 $('#description').val(response.data.description);
+                                    //                 $('#total_units').val(response.data.total_units);
+                                    //                 $('#lec_units').val(response.data.lec_units);
+                                    //                 $('#lab_units').val(response.data.lab_units);
+                                    //                 $('#hours').val(response.data.hours);
+                                    //                 $('#timeslot_sid').val(response.data.timeslot_sid);
+                                    //             } else {
+                                    //                 alert('Failed to fetch data.');
+                                    //             }
+                                    //         },
+                                    //         error: function () {
+                                    //             alert('An error occurred while fetching data.');
+                                    //         }
+                                    //     });
+                                    // });
+
+                                    // $('#newScheduleModal').on('hidden.bs.modal', function () {
+                                    //     $(this).find('form')[0].reset(); // Reset the form
+                                    //     $(this).find('.select2').val(null).trigger('change'); // Reset select2 fields
+                                    // });
+
+
+                                    $('#newScheduleModal').on('hide.bs.modal', function () {
+                                        // Clear the 'load_id' and 'dept_id' inputs
+                                        $('#load_id').val('');
+                                        $('#dept_id').val('');
+                                        const url = new URL(window.location.href);
+                                        url.searchParams.delete('id');
+                                        history.replaceState(null, '', url);
+                                    });
+
 
                                     $('.edit_load').click(function () {
                                         // Get the data-id attribute from the clicked button
@@ -814,66 +865,49 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     function populateSubjects() {
                                         var e = document.getElementById('yrsection');
                                         var sem = document.getElementById('semester');
+                                        if (!e || !sem) {
+                                            console.error('yrsection or semester element not found!');
+                                            return;
+                                        }
+
                                         var semester = sem.options[sem.selectedIndex].value;
                                         var course = e.options[e.selectedIndex].getAttribute('data-course');
                                         var year = e.options[e.selectedIndex].getAttribute('data-year');
-                                        //var attrs = option.attributes;
-                                        var courseyear = course + " " + year;
-                                        console.log(course);
-                                        console.log(year);
-                                        console.log(semester);
-
 
                                         var subjectel = document.getElementById('subject');
+                                        subjectel.innerHTML = "<option value='0'>Select Subject</option>";
 
-                                        subjectel.innerHTML = "";
-
-                                        var subjectopt = document.createElement('option');
-                                        subjectopt.value = 0;
-                                        subjectopt.innerHTML = 'Select Subject';
-                                        subjectel.appendChild(subjectopt);
-
-
-                                        // AJAX request
                                         var xhttp = new XMLHttpRequest();
                                         xhttp.open("POST", "gfg.php", true);
                                         xhttp.setRequestHeader("Content-Type", "application/json");
                                         xhttp.onreadystatechange = function () {
-                                            if (this.readyState == 4 && this.status == 200) {
-                                                // Response
-                                                var response = JSON.parse(this.responseText);
-
-                                                var len = 0;
-                                                if (response != null) {
-                                                    len = response.length;
-                                                }
-
-                                                if (len > 0) {
-                                                    // Read data and create <option >
-                                                    for (var i = 0; i < len; i++) {
-
-                                                        var id = response[i].id;
-                                                        var name = response[i].name;
-                                                        var specialization = response[i].specialization;
-
-                                                        // Add option to state dropdown
-                                                        var opt = document.createElement('option');
-                                                        opt.value = id;
-                                                        opt.innerHTML = name;
-
-                                                        const special = document.createAttribute("data-special");
-                                                        // Set the value of the class attribute:
-                                                        special.value = specialization;
-                                                        opt.setAttributeNode(special);
-                                                        subjectel.appendChild(opt);
-
+                                            if (this.readyState == 4) {
+                                                if (this.status == 200) {
+                                                    try {
+                                                        var response = JSON.parse(this.responseText);
+                                                        response.forEach(function (item) {
+                                                            var opt = document.createElement('option');
+                                                            opt.value = item.id;
+                                                            opt.innerHTML = item.name;
+                                                            opt.setAttribute('data-special', item.specialization);
+                                                            subjectel.appendChild(opt);
+                                                        });
+                                                    } catch (err) {
+                                                        console.error('Invalid JSON response:', err);
                                                     }
+                                                } else {
+                                                    console.error('AJAX error: ' + this.statusText);
                                                 }
                                             }
                                         };
+                                        xhttp.onerror = function () {
+                                            console.error('AJAX request failed.');
+                                        };
+
                                         var data = { request: 'getSubjects', course: course, year: year, semester: semester };
                                         xhttp.send(JSON.stringify(data));
                                     }
+
 
                                     function populateTimeslot(subject, days) {
                                         var e = document.getElementById('subject');
