@@ -143,64 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <style>
-/* Custom Modal Styles */
-.custom-modal {
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.custom-modal-header {
-    background: #007bff;
-    color: white;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    padding: 15px;
-}
-
-.custom-modal-header .modal-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.custom-modal-body {
-    color: #333;
-    font-size: 16px;
-    line-height: 1.8;
-}
-
-.custom-modal-body h5 {
-    color: #007bff;
-    font-weight: bold;
-    margin-top: 15px;
-}
-
-.custom-modal-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.custom-modal-footer {
-    background: #f1f1f1;
-    padding: 10px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-.custom-modal-footer .btn-secondary {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: 0.3s;
-}
-
-.custom-modal-footer .btn-secondary:hover {
-    background: #0056b3;
-}
-
 
     body.animsition {
         background-color: #f0f2f5; /* Light gray background color */
