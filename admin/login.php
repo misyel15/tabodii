@@ -247,8 +247,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <!-- Modal Structure for Terms and Conditions -->
-<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true" >
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog custom-modal-dialog" role="document">
         <div class="modal-content custom-modal">
             <div class="modal-header custom-modal-header">
                 <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
@@ -286,6 +286,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+
+<!-- Custom CSS for Modal Width -->
+<style>
+.custom-modal-dialog {
+    max-width: 50%; /* Adjust width as needed */
+}
+
+.custom-modal {
+    padding: 20px;
+}
+
+.custom-modal-header, 
+.custom-modal-body, 
+.custom-modal-footer {
+    padding: 15px;
+}
+</style>
+
 
 
                                 <button class="au-btn au-btn--block au-btn--blue m-b-20" type="submit">Login</button>
