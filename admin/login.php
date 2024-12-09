@@ -143,6 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <style>
+    body {
+    font-family: 'Times New Roman', serif;
+}
 
     body.animsition {
         background-color: #f0f2f5; /* Light gray background color */
