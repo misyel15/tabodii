@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <!-- Modal Structure for Terms and Conditions -->
-<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true">
+<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true" style="width:20%;">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content custom-modal">
             <div class="modal-header custom-modal-header">
