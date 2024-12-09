@@ -158,7 +158,7 @@ body {
 <li><a href="timeslot.php"><i class="fas fa-clock"></i>Timeslot</a></li>
 <li><a href="section.php"><i class="fas fa-users"></i>Section</a></li>
 <li><a href="roomassigntry.php"><i class="fas fa-clipboard-list"></i>Room Assignment</a></li>
-<li><a href="roomsched.php"><i class="fas fa-calendar-alt"></i>Room Schedule</a></li>
+<li><a href="roomsched"><i class="fas fa-calendar-alt"></i>Room Schedule</a></li>
 
 <li class="has-sub">
     <a class="js-arrow" href="#">
