@@ -36,6 +36,7 @@ include 'headers.php';
     cursor: pointer;
     font-size: 16px;
     margin-right: 10px; /* Space between buttons */
+    style="font-family: Times New Roman";
 }
 
 .cookie-consent-content button#declineCookie {
@@ -51,8 +52,8 @@ include 'headers.php';
   bottom: 10px;
   left: 0%;
   width: 100%;
-  background-color: #333;
-  color: white;
+  background-color: lightgray;
+  color: black;
   padding: 10px;
   text-align: center;
   z-index: 9999;
@@ -87,9 +88,12 @@ include 'headers.php';
       width: 100%;
       object-fit: cover;
     }
+    .header_section {
+  font-family: 'Times New Roman', Times, serif;
+}
 
   .header_section {
-    background: linear-gradient(315deg, #C8A182 0%, #67574A 100%);
+    background: #8B0000;
 
   position: sticky;
   top: 0;
@@ -144,7 +148,7 @@ include 'headers.php';
     }
 
     .nav-link.button-style {
-      background: linear-gradient(to right, #80DFE1, #6CBAA5);
+      background: transparent;
 
       color: #fff !important;
       border-radius: 50px;
@@ -154,18 +158,23 @@ include 'headers.php';
     }
 
     .nav-link.button-style:hover {
-      background-color: gray;
+      background-color: black;
       color: #fff !important;
     }
 
     /* Footer Calendar Box */
     .calendar-box {
-      background-color: #f2f2f7; /* Custom background color */
+      background-color: lightgray; /* Custom background color */
       border: 1px solid #ddd;
       border-radius: 10px;
       padding: 20px;
       margin-bottom: 20px;
+      
     }
+
+    .footer_section {
+  font-family: 'Times New Roman', Times, serif;
+}
 
     .calendar-icon {
       font-size: 50px;
@@ -209,7 +218,7 @@ include 'headers.php';
                         <a class="nav-link button-style" href="index">Home</a>
                     </li>
                     <li class="nav-item" style="margin-left:20px;">
-                        <a class="nav-link button-style" href="about">About</a>
+                        <a class="nav-link button-style" href="About">About</a>
                     </li>
                     <li class="nav-item dropdown" style="margin-left:20px;">
                         <a class="nav-link dropdown-toggle button-style" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -233,11 +242,11 @@ include 'headers.php';
         <div class="col-md-6">
           <div class="detail_box">
             <h1 class="display-3 fw-bolder mb-5">
-              <marquee style="font-size: 50px;">
-                <span class="text-gradient" style="font-family: Algerian;">Welcome to MCC Faculty Scheduling</span>
+              <marquee style="font-size: 60px;">
+                <span class="text-color: #333;" style="font-family: Times New Roman;">Welcome to MCC Faculty Scheduling</span>
               </marquee>
             </h1>
-            <p class="lead">Here you can manage the scheduling of all faculty members efficiently and effectively. Our system helps you stay organized and up-to-date with the latest changes in the schedule.</p>
+            <p class="lead" style="font-family: Times New Roman;">Here you can manage the scheduling of all faculty members efficiently and effectively. Our system helps you stay organized and up-to-date with the latest changes in the schedule.</p>
           </div>
         </div>
         
@@ -269,32 +278,34 @@ include 'headers.php';
   </section>
 <br>
    <!-- Footer Section -->
-  <footer class="footer_section">
-    <div class="container">
-      <div class="row text-center">
-        <div class="col-md-4">
-          <div class="calendar-box">
-            <div class="calendar-icon" style="color: #1e30f3;"><i class="fas fa-calendar-alt"></i></div>
-            <h5 class="mt-3">Class Schedules</h5>
-            <p>Manage and view all upcoming class schedules.</p>
-          </div>
+<footer class="footer_section" style="font-family: 'Times New Roman', Times, serif;">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="calendar-box">
+          <div class="calendar-icon" style="color: #1e30f3;"><i class="fas fa-calendar-alt"></i></div>
+          <h5 class="mt-3">Class Schedules</h5>
+          <p>Manage and view all upcoming class schedules.</p>
         </div>
-        
-        <div class="col-md-4">
-          <div class="calendar-box">
-            <div class="calendar-icon" style="color: #e21e80;"><i class="fas fa-calendar-check"></i></div>
-            <h5 class="mt-3">Faculty Meetings</h5>
-            <p>Keep track of faculty meetings and other important events.</p>
-          </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="calendar-box">
+          <div class="calendar-icon" style="color: #e21e80;"><i class="fas fa-calendar-check"></i></div>
+          <h5 class="mt-3">Faculty Meetings</h5>
+          <p>Keep track of faculty meetings and other important events.</p>
         </div>
-        
-        <div class="col-md-4">
-          <div class="calendar-box">
-            <div class="calendar-icon" style="color: #28a745;"><i class="fas fa-calendar-plus"></i></div>
-            <h5 class="mt-3">Create New Schedules</h5>
-            <p>Effortlessly create new schedules for classes and events.</p>
-          </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="calendar-box">
+          <div class="calendar-icon" style="color: #28a745;"><i class="fas fa-calendar-plus"></i></div>
+          <h5 class="mt-3">Create New Schedules</h5>
+          <p>Effortlessly create new schedules for classes and events.</p>
         </div>
+      </div>
+    </div>
+  </div>
       </div>
     </div>
     <div id="cookieConsent" class="cookie-consent-banner">
