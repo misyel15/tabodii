@@ -151,9 +151,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         background-color: #f0f2f5; /* Light gray background color */
     }
 
-    .page-wrapper {
+      .page-wrapper {
+        background: url('assets/uploads/backs.jpg') no-repeat center center fixed; 
+    background-size: cover; /* Ensures the image covers the entire background */
         background-color: #eae6f5; /* White background for the page wrapper */
         padding-top: 50px; /* Add some spacing at the top */
+    }
     }
 
     .login-wrap {
