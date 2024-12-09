@@ -52,7 +52,7 @@
   background: url('backs.jpg') no-repeat center center fixed;
     background-size: cover; /* Cover the entire section */
     background-position: center; /* Center the image */
-    opacity: 0.5; /* Adjust transparency (0.0 to 1.0) */
+    opacity: 0.9; /* Adjust transparency (0.0 to 1.0) */
     z-index: 1; /* Place it behind the content */
   }
 
