@@ -49,16 +49,22 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
     <link href="css/theme.css" rel="stylesheet" media="all">
 
 </head>
-
 <style>
-    .header-desktop {
+/* Apply Times New Roman font to all elements */
+body {
+    font-family: 'Times New Roman', serif;
+}
+
+.header-desktop {
     position: fixed;
     margin-top: 0px;
     justify-content: flex-end; /* Align elements to the right */
     align-items: center; /* Vertically center elements */
     padding: 0 15px; /* Add some padding */
     background-color: #f8f9fa; /* Background color for the header */
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
+
 .header-mobile {
     position: fixed; /* Fixes the header at the top */
     top: 0;
@@ -66,42 +72,44 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
     height: 20px;
     width: 100%; /* Ensures the header spans the full width */
     z-index: 9999; /* Keeps it above other elements */
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
 
 .header-mobile__bar {
     display: flex; /* Flexbox for layout */
     justify-content: space-between; /* Space between the logo and button */
     align-items: center; /* Center-align items vertically */
-    background-color: #fff; /* Background color (adjust as needed) */
+    background-color: #8B0000; /* Background color (adjust as needed) */
     padding: 10px 15px; /* Padding around content */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
+
 /* General header styling */
 .header-desktop {
     position: fixed;
-   margin-top:0px;
+    margin-top: 0px;
     justify-content: space-between; /* Space out elements */
     align-items: center; /* Vertically center elements */
     padding: 0 15px; /* Add some padding */
     background-color: #f8f9fa; /* Background color for the header */
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
-
-
 
 /* Notifications styling */
 .noti-wrap {
     position: relative;
     display: flex;
     align-items: center;
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
 
 /* Account wrap styling */
 .account-wrap {
     display: flex;
     align-items: center;
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
-
-
 
 /* Ensure image and content align properly */
 .image img {
@@ -109,14 +117,17 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
     width: 50px;
     height: 40px;
 }
+
+/* Dropdown hover effect */
 .account-dropdown__footer a:hover {
-    color: black; /* Changes the text color to black */
-    background-color: green; /* Optional: if you want to change the background */
+    color: white; /* Changes the text color to black */
+    background-color: black; /* Optional: if you want to change the background */
+    font-family: 'Times New Roman', serif; /* Times New Roman font */
 }
 
 </style>
 <body class="animsition">
-    <div class="page-wrapper">
+    <div class="page-wrapper" >
         <!-- HEADER MOBILE-->
         <header class="header-mobile d-block d-lg-none">
             <div class="header-mobile__bar">
@@ -172,10 +183,11 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
 
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
-            <div class="logo">
+            <div class="logo"style="background-color: #8B0000; color:white;">
                
-                    <img src="assets/uploads/mcclogo.jpg"style="height: 50px; width: 50px;" alt="Mcc Faculty Scheduling"  />
-                    Mcc Faculty Scheduling
+            <img src="assets/uploads/mcclogo.jpg" style="height: 50px; width: 50px; margin-right: 10px;margin-left: -30px;" />
+<span>MCC Faculty Scheduling</span>
+
                
             </div>
             <div class="menu-sidebar__content js-scrollbar1">
@@ -361,34 +373,7 @@ if (!isset($_SESSION['username']) || !isset($_SESSION['dept_id'])) {
       });
     });
   </script>
-   </script>
-
-<!-- Anti-inspect JavaScript -->
-<script>
-// Disable right-click
-document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-}, false);
-
-// Disable F12 (Inspect Element) and Ctrl+Shift+I
-document.addEventListener('keydown', function (e) {
-    // F12
-    if (e.keyCode === 123) {
-        e.preventDefault();
-    }
-    // Ctrl + Shift + I
-    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-        e.preventDefault();
-    }
-}, false);
-
-// Disable Ctrl+U (View Source)
-document.addEventListener('keydown', function (e) {
-    if (e.ctrlKey && e.keyCode === 85) {
-        e.preventDefault();
-    }
-}, false);
-</script>
+ 
      <script>
 function markAsRead(notificationId) {
     // Send AJAX request to mark notification as read
