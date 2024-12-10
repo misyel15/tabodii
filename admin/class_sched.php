@@ -191,7 +191,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
         var secid = $('#sec_id').val();
         var semester = $('#semester').val();
         if (secid && semester) {
-            window.location.href = 'class_sched.php?page=class_sched&secid=' + secid + '&semester=' + semester;
+            window.location.href = 'class_sched?page=class_sched&secid=' + secid + '&semester=' + semester;
         }
     });
 
@@ -208,7 +208,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
     $('#print').click(function(){
         var secid = $(this).data('secid');
         var semester = $(this).data('semester');
-        window.location.href = 'class_schedgenerate.php?secid=' + secid + '&semester=' + semester;
+        window.location.href = 'class_schedgenerate?secid=' + secid + '&semester=' + semester;
     });
 
     function delete_schedule(id){
