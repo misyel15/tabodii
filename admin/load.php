@@ -225,7 +225,7 @@ $dept_id = $_SESSION['dept_id']; // Assuming dept_id is set during login
     });
 
     $('.edit_schedule').click(function() {
-        uni_modal("Manage Job Post", "manage_schedule.php?id=" + $(this).attr('data-id'), 'mid-large');
+        uni_modal("Manage Job Post", "manage_schedule?id=" + $(this).attr('data-id'), 'mid-large');
     });
 
     $('.delete_schedule').click(function() {
@@ -233,7 +233,7 @@ $dept_id = $_SESSION['dept_id']; // Assuming dept_id is set during login
     });
 
     $('#print').click(function() {
-        window.location.href = 'load_generate.php?id=' + $(this).attr('data-id');
+        window.location.href = 'load_generate?id=' + $(this).attr('data-id');
     });
 
     function delete_schedule($id) {
