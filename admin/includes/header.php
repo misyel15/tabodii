@@ -384,7 +384,7 @@ function markAsRead(notificationId) {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 // Reload the notification bell or redirect to all notifications page after marking as read
-                window.location.href = 'view_notif.php?id=' + encodeURIComponent(notificationId); // Properly handled redirection
+                window.location.href = 'view_notif?id=' + encodeURIComponent(notificationId); // Properly handled redirection
             } else {
                 console.error('Error marking notification as read');
             }
