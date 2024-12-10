@@ -114,7 +114,7 @@ $dept_id = $_SESSION['dept_id'];
 
     $('#print').click(function(e) {
         e.preventDefault();
-        $('#printra').attr('action', 'summary_generate.php');
+        $('#printra').attr('action', 'summary_generate');
         $('#printra').submit();
     });
 
