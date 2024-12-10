@@ -60,7 +60,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 								$semester =$_GET['semester'];
 								$year =$_GET['year'];
 								$course =$_GET['course'];?>
-								<form method="post" action="export_csv.php?secid=<?php echo  $secid?>&semester=<?php echo  $semester?>&year=<?php echo  $year?>&course=<?php echo  $course?>" align="center">  
+								<form method="post" action="export_csv?secid=<?php echo  $secid?>&semester=<?php echo  $semester?>&year=<?php echo  $year?>&course=<?php echo  $course?>" align="center">  
                      <input type="submit" name="export" value="Export Schedule" class="btn btn-success" />  
                 </form> 
 				<br>
@@ -213,7 +213,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 		semester = $('#semester').val();
 		course = $('#course').val();
 		year = $('#year').val();
-		window.location.href = 'export.php?page=export&secid='+secid+'&semester='+semester+'&year='+year+'&course='+course;
+		window.location.href = 'export?page=export&secid='+secid+'&semester='+semester+'&year='+year+'&course='+course;
 	})
 	$('.edit_schedule').click(function(){
 		uni_modal("Manage Job Post","manage_schedule.php?id="+$(this).attr('data-id'),'mid-large')
@@ -224,7 +224,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 	})
 	$('#print').click(function(){
 	//uni_modal('View Subjects','class_sched.php?secid='+$(this).attr('data-secid'))
-	window.location.href = 'class_schedgenerate.php?secid='+$(this).attr('data-secid')+'&semester='+$(this).attr('data-semester');
+	window.location.href = 'class_schedgenerate?secid='+$(this).attr('data-secid')+'&semester='+$(this).attr('data-semester');
 	});
 
 	function delete_schedule($id){
