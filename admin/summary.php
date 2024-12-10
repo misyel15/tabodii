@@ -16,7 +16,7 @@ $dept_id = $_SESSION['dept_id'];
                     <i class="fas fa-print"></i> Print
                 </button>
                 <center><h3>Summary of Teaching Loads</h3></center>
-                <form method="POST" class="form-inline" id="printra" action="summary_generate.php" style="margin-left: 520px;">
+                <form method="POST" class="form-inline" id="printra" action="summary_generate" style="margin-left: 520px;">
                 </form>
             </div>
             <div class="table-responsive">
