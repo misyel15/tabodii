@@ -37,7 +37,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                     </select>
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <button type="reset" class="btn btn-secondary ml-2" onclick="document.getElementById('filterForm').reset();">Reset</button>
-                    &nbsp&nbsp<a href="print_schedule.php?selected_room=<?php echo urlencode($selected_room); ?>" class="btn btn-success" target="_blank">Print</a>
+                    &nbsp&nbsp<a href="print_schedule?selected_room=<?php echo urlencode($selected_room); ?>" class="btn btn-success" target="_blank">Print</a>
                 </form>
             </div>
             <div class="card-body">
