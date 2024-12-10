@@ -263,7 +263,7 @@ body {
         <?php endwhile; ?>
 
         <div class="notifi__footer">
-            <a href="all_notification.php">All notifications</a>
+            <a href="all_notification">All notifications</a>
         </div>
     </div>
 </div>
