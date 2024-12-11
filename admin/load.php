@@ -233,7 +233,7 @@ $dept_id = $_SESSION['dept_id']; // Assuming dept_id is set during login
     });
 
     $('#print').click(function() {
-        window.location.href = 'home.php?id=' + $(this).attr('data-id');
+        window.location.href = 'Load_print.php?id=' + $(this).attr('data-id');
     });
 
     function delete_schedule($id) {
