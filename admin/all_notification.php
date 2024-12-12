@@ -106,7 +106,7 @@ $currentTime = date('d-m-Y h:i:s A', time());
         
         }
         .header-red {
-    background-color: red !important; /* Force red background */
+    background-color: #8B0000 !important; /* Force red background */
     background-blend-mode: overlay;  /* Blend the image and color */
 }
 
