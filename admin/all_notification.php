@@ -63,7 +63,7 @@ $currentTime = date('d-m-Y h:i:s A', time());
                                     <i class="zmdi zmdi-account-calendar"></i> You have <?php echo htmlentities($unreadCount); ?> Notifications
                                 </h3>
                                 <button class="au-btn-plus">
-                                    <a href="home.php" style="color:white">Back</a>
+                                    <a href="home.php" style="color:red">Back</a>
                                 </button>
                             </div>
 
