@@ -37,7 +37,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                         <i class="fa fa-user-plus"></i> New Entry
                     </button>
                 </div>
-                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate.php">
+                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -112,7 +112,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printtth">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth.php">
+                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -188,7 +188,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printfri">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri.php">
+                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -359,7 +359,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                         <input type="checkbox" id="toggle-section"> Show Section Dropdown
                                     </label>
                                     <label for="section-display" class="control-label">Yr. and Section</label>
-                                    <input type="text" id="section-display" name="section_display" class="form-control" readonly>
+                                    <input type="hidden" id="section-display" name="section_display" class="form-control" readonly>
                                 </div>
                             </div>
 
