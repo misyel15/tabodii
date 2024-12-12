@@ -191,7 +191,7 @@ if (isset($_POST['reset'])) {
         }
 
         .card-header {
-            background-color: red;
+            background-color: lightgray;
             color: black;
             text-align: center;
             padding: 1.5rem;
