@@ -1,21 +1,22 @@
 <?php
-include 'db_connect.php'; // Include your database connection file
+// Assuming you are using a database connection
+include 'db_connection.php';
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $loading_query = $conn->query("SELECT * FROM loading WHERE id = '$id'");
-    
-    if ($loading_query) {
-        $loading_data = $loading_query->fetch_assoc();
-        if ($loading_data) {
-            echo json_encode($loading_data);
-        } else {
-            echo json_encode(['error' => 'No data found']);
+if (isset($_POST['day']) && isset($_POST['dept_id'])) {
+    $day = $_POST['day'];
+    $deptId = $_POST['dept_id'];
+
+    // Query the database to fetch timeslots for the selected day and department
+    $query = "SELECT * FROM timeslot WHERE days = '$day' AND dept_id = '$deptId'"; 
+    $result = $conn->query($query);
+
+    // Generate HTML options for the timeslot dropdown
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . $row['id'] . '">' . $row['timeslot'] . ' ' . $row['schedule'] . '</option>';
         }
     } else {
-        echo json_encode(['error' => 'Error executing query: ' . $conn->error]);
+        echo '<option value="">No timeslots available</option>';
     }
-} else {
-    echo json_encode(['error' => 'ID not set']);
 }
 ?>
