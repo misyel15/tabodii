@@ -36,7 +36,7 @@ $currentTime = date('d-m-Y h:i:s A', time());
                 <div class="row justify-content-center">
                     <div class="col-lg-6">
                         <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
-                            <div class="au-card-title" style="background-image:url('<?php echo isset($data['Image']) ? htmlentities($data['Image']) : ''; ?>');">
+                            <div class="au-card-title" style="background-image:url('<?php echo isset($data['Image']) ? htmlentities($data['Image']) : ''; ?>'); background-color: #8B0000;">
                               
                                 <h3>
                                     <button class="btn-sm" style="margin-right: 1px;" onclick="location.href='home.php'">
