@@ -26,6 +26,11 @@ $currentTime = date('d-m-Y h:i:s A', time());
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+<style>
+    .header-blue {
+    background-color: #00008B;
+}
+</style>
 <body class="animsition">
     <div class="wrapper">
         <br><br><br>
