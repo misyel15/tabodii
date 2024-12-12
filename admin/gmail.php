@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .card-header {
             background-color:  #8B0000;
-            color: wwhite;
+            color: white;
             text-align: center;
             padding: 1.5rem;
             border-radius: 20px 20px 0 0;
