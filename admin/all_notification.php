@@ -103,7 +103,13 @@ $currentTime = date('d-m-Y h:i:s A', time());
     <style type="text/css">
         .unread {
             background-color: antiquewhite; /* Background color for unread notifications */
+        
         }
+        .header-red {
+    background-color: red !important; /* Force red background */
+    background-blend-mode: overlay;  /* Blend the image and color */
+}
+
     </style>
 
     <!-- JavaScript to mark notifications as read -->
