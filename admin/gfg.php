@@ -1,9 +1,6 @@
 <?php
 include('db_connect.php');
 
-// Get the department ID from the session
-$dept_id = $_SESSION['dept_id']; // Assuming dept_id is set during login
-
 // Read POST data
 $postData = json_decode(file_get_contents("php://input"));
 $request = isset($postData->request) ? $postData->request : "";
@@ -18,60 +15,73 @@ switch ($request) {
       if (isset($postData->course)) {
          $course = $postData->course;
 
-         $sql = "SELECT * FROM section WHERE course=? AND dept_id=?";
+         $sql = "SELECT * FROM section WHERE course=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("si", $course, $dept_id);
+         $stmt->bind_param("s", $course);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $id = $row['year'] . "" . $row['section'];
+            $name = $row['year'] . "" . $row['section'];
+            $course = $row['course'];
+            $year = $row['year'];
+
             $data[] = array(
-               "id" => $row['year'] . $row['section'],
-               "name" => $row['year'] . $row['section'],
-               "course" => $row['course'],
-               "year" => $row['year']
+               "id" => $id,
+               "name" => $name,
+               "course" => $course,
+               "year" => $year
             );
          }
       }
       break;
 
    case 'getSubjects':
-      if (isset($postData->course, $postData->year, $postData->semester)) {
+      if (isset($postData->course) && isset($postData->year) && isset($postData->semester)) {
          $course = $postData->course;
          $year = $postData->year;
          $semester = $postData->semester;
 
-         $sql = "SELECT * FROM subjects WHERE course=? AND year=? AND semester=? AND dept_id=?";
+         $sql = "SELECT * FROM subjects WHERE course=? AND year=? AND semester=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("sssi", $course, $year, $semester, $dept_id);
+         $stmt->bind_param("sss", $course, $year, $semester);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $id = $row['subject'];
+            $name = $row['subject'];
+            $specialization = $row['specialization'];
+
             $data[] = array(
-               "id" => $row['subject'],
-               "name" => $row['subject'],
-               "specialization" => $row['specialization']
+               "id" => $id,
+               "name" => $name,
+               "specialization" => $specialization
             );
          }
       }
       break;
 
    case 'getTimeslot':
-      if (isset($postData->days, $postData->specialization)) {
+      if (isset($postData->subject) && isset($postData->days) && isset($postData->specialization)) {
+         $subject = $postData->subject;
          $days = $postData->days;
          $specialization = $postData->specialization;
 
-         $sql = "SELECT * FROM timeslot WHERE schedule=? AND specialization=? AND dept_id=?";
+         $sql = "SELECT * FROM timeslot WHERE schedule=? AND specialization=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("ssi", $days, $specialization, $dept_id);
+         $stmt->bind_param("ss", $days, $specialization);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $time_data = $row['timeslot'] . " " . $row['schedule'];
+            $id = $row['id'];
+
             $data[] = array(
-               "id" => $row['id'],
-               "name" => $row['timeslot'] . " " . $row['schedule']
+               "id" => $id,
+               "name" => $time_data
             );
          }
       }
@@ -81,16 +91,19 @@ switch ($request) {
       if (isset($postData->section_id)) {
          $section_id = $postData->section_id;
 
-         $sql = "SELECT * FROM section WHERE year=? AND dept_id=?";
+         $sql = "SELECT * FROM section WHERE year=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("si", $section_id, $dept_id);
+         $stmt->bind_param("s", $section_id);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $id = $row['section'];
+            $name = $row['section'];
+
             $data[] = array(
-               "id" => $row['section'],
-               "name" => $row['section']
+               "id" => $id,
+               "name" => $name
             );
          }
       }
@@ -100,18 +113,67 @@ switch ($request) {
       if (isset($postData->id)) {
          $id = $postData->id;
 
-         $sql = "SELECT * FROM subjects WHERE subject=? AND dept_id=?";
+         $sql = "SELECT * FROM subjects WHERE subject=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("si", $id, $dept_id);
+         $stmt->bind_param("s", $id);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $description = $row['description'];
+            $total_units = $row['total_units'];
+            $lec_units = $row['Lec_Units'];
+            $lab_units = $row['Lab_Units'];
+
             $data[] = array(
-               "description" => $row['description'],
-               "total_units" => $row['total_units'],
-               "lec_units" => $row['Lec_Units'],
-               "lab_units" => $row['Lab_Units']
+               "description" => $description,
+               "total_units" => $total_units,
+               "lec_units" => $lec_units,
+               "lab_units" => $lab_units
+            );
+         }
+      }
+      break;
+
+   case 'getHours':
+      if (isset($postData->id)) {
+         $id = $postData->id;
+
+         $sql = "SELECT * FROM timeslot WHERE id=?";
+         $stmt = $conn->prepare($sql);
+         $stmt->bind_param("i", $id);
+         $stmt->execute();
+         $result = $stmt->get_result();
+
+         while ($row = $result->fetch_assoc()) {
+            $hours = $row['hours'];
+            $timeslot_sid = $row['time_id'];
+
+            $data[] = array(
+               "hours" => $hours,
+               "timeslot_sid" => $timeslot_sid
+            );
+         }
+      }
+      break;
+
+   case 'getTime':
+      if (isset($postData->id)) {
+         $id = $postData->id;
+
+         $sql = "SELECT * FROM timeslot WHERE id=?";
+         $stmt = $conn->prepare($sql);
+         $stmt->bind_param("i", $id);
+         $stmt->execute();
+         $result = $stmt->get_result();
+
+         while ($row = $result->fetch_assoc()) {
+            $id = $row['id'];
+            $time = $row['timeslot'];
+
+            $data[] = array(
+               "id" => $id,
+               "timeslot" => $time
             );
          }
       }
@@ -121,16 +183,19 @@ switch ($request) {
       if (isset($postData->id)) {
          $id = $postData->id;
 
-         $sql = "SELECT * FROM roomlist WHERE room_id=? AND dept_id=?";
+         $sql = "SELECT * FROM roomlist WHERE room_id=?";
          $stmt = $conn->prepare($sql);
-         $stmt->bind_param("ii", $id, $dept_id);
+         $stmt->bind_param("i", $id);
          $stmt->execute();
          $result = $stmt->get_result();
 
          while ($row = $result->fetch_assoc()) {
+            $id = $row['id'];
+            $room_name = $row['room_name'];
+
             $data[] = array(
-               "id" => $row['id'],
-               "room_name" => $row['room_name']
+               "id" => $id,
+               "room_name" => $room_name
             );
          }
       }
@@ -147,4 +212,5 @@ echo json_encode($data);
 // Close database connection
 $stmt->close();
 $conn->close();
+die();
 ?>
