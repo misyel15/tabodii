@@ -267,8 +267,8 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 </button>
             </div>
             <form id="newScheduleForm">
-                <input type="text" name="id" id="load_id" value="">
-                <input type="text" name="dept_id" value="<?php echo $dept_id; ?>">
+                <input type="hidden" name="id" id="load_id" value="">
+                <input type="hidden" name="dept_id" value="<?php echo $dept_id; ?>">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
