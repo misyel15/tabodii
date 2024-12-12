@@ -480,7 +480,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                             <option value="" disabled selected>Select Timeslot</option>
                                             <?php
                                             // Query to fetch timeslots based on department
-                                            $sql = "SELECT * FROM timeslot";
+                                            $sql = "SELECT * FROM timeslot  WHERE dept_id = '$dept_id'";
                                             $query = $conn->query($sql);
 
                                             // Loop through the fetched rows and populate the dropdown
@@ -494,15 +494,6 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     </div>
                                 </div>
 
-                                <!-- Hidden Inputs -->
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <input type="hidden" class="form-control" name="hours" id="hours"
-                                            value="<?php echo isset($meta['hours']) ? htmlspecialchars($meta['hours']) : '' ?>">
-                                        <input type="hidden" name="timeslot_sid" id="timeslot_sid"
-                                            value="<?php echo isset($meta['timeslot_sid']) ? htmlspecialchars($meta['timeslot_sid']) : '' ?>">
-                                    </div>
-                                </div>
                                 <!-- Hidden Inputs -->
                                 <div class="form-group">
                                     <div class="col-sm-12">
