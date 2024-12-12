@@ -488,6 +488,9 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     <span class="rem badge badge-primary" onclick="rem_func($(this))"><i
                                             class="fa fa-times"></i></span>
                                 </div>
+                                <!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha384-o/8AwyG13I7ou3NG1DBRQ96WJJ7SWoO9iX7fbb4nbYHAOJiFr07XkUm0I6P6akmD" crossorigin="anonymous"></script>
+
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                 <script>
                                     // document.addEventListener('DOMContentLoaded', function () {
