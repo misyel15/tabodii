@@ -736,6 +736,7 @@ class Action {
 		// Return success or failure status
 		return $delete ? 1 : 2; // Return 1 for success, 2 for failure
 	}
+	
 	function save_roomschedule() {
 		extract($_POST);
 		
@@ -745,8 +746,8 @@ class Action {
 		$data = " timeslot_id = '$timeslot_id' ";
 		$data .= ", timeslot = '$timeslot' ";
 		$data .= ", rooms = '$room' ";
-		$data .= ", faculty = '" . (!empty($faculty_id) ? $faculty_id : $faculty) . "' ";
-		$data .= ", course = '" . (!empty($section_display) ? $section_display : $yrsection) . "' ";
+		$data .= ", faculty = '$faculty' ";
+		$data .= ", course = '$yrsection' ";
 		$data .= ", subjects = '$subject' ";
 		$data .= ", semester = '$semester' ";
 		$data .= ", days = '$days' ";
@@ -758,7 +759,7 @@ class Action {
 		$data .= ", hours = '$hours' ";
 		$data .= ", timeslot_sid = '$timeslot_sid' ";
 		$data .= ", room_name = '$room_name' ";
-		$data .= ", dept_id = '$dept_id' ";
+		$data .= ", dept_id = '$dept_id' "; // Add dept_id to the data string
 	
 		if (empty($id)) {
 			// Decrease the subject status if this is a new entry
@@ -806,7 +807,6 @@ class Action {
 	
 		return 0; // Return 0 if save operation fails
 	}
-	
 	function save_roomscheduletth(){
 		extract($_POST);
 		$data = " timeslot_id = '$timeslot_id' ";
