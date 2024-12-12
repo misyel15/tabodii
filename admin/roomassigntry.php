@@ -655,7 +655,8 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     $('#room_name').val('');
                                     $('#timeslot_sid').val('');
 
-                                  
+                                    $('#faculty-input-group').hide();
+                                    $('#section-input-group').hide();
                                     // If you are using a select2 plugin, you may need to reset it as well
                                     // Example:
                                     // $('#faculty-id').val('').trigger('change'); // To reset select2 if necessary
