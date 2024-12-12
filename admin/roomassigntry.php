@@ -37,7 +37,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                         <i class="fa fa-user-plus"></i> New Entry
                     </button>
                 </div>
-                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate">
+                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate.php">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -112,7 +112,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printtth">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth">
+                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth.php">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -188,7 +188,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printfri">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri">
+                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri.php">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -266,25 +266,13 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="newScheduleForm" method="post">
+            <form id="newScheduleForm">
                 <input type="hidden" name="id" id="load_id" value="">
                 <input type="hidden" name="dept_id" value="<?php echo $dept_id; ?>">
                 <div class="modal-body">
                     <div class="row">
-
                         <div class="col-md-12">
-
-                        <div class="form-group" id="faculty-input-group">
-                                <div class="col-sm-12">
-                                    <label>
-                                        <input type="checkbox" id="toggle-faculty"> Show Faculty Dropdown
-                                    </label>
-                                    <label for="faculty-display" class="control-label">Faculty Name</label>
-                                    <input type="text" id="faculty-display" name="faculty_display" class="form-control" placeholder="Enter Faculty Name" readonly>
-                                    <input type="hidden" id="faculty-id" name="faculty_id" value="">
-                                </div>
-                            </div>
-                            <div class="form-group" id="faculty-dropdown-group">
+                            <div class="form-group">
                                 <div class="col-sm-12">
                                     <label for="" class="control-label">Faculty</label>
                                     <select name="faculty" id="" class="custom-select select2">
@@ -296,11 +284,9 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                          WHERE dept_id = '$dept_id' 
                                          ORDER BY concat(lastname, ', ', firstname, ' ', middlename) ASC");
                                         while ($row = $faculty->fetch_array()):
-                                            $facultyId = $row['id'];
-                                            $facultyname = $row['name'];
                                             ?>
-                                            <option value="<?php echo $facultyId ?>" <?php echo isset($meta['faculty']) && $meta['faculty'] == $facultyId ? 'selected' : '' ?>>
-                                                <?php echo ucwords($facultyname) ?>
+                                            <option value="<?php echo $row['id'] ?>" <?php echo isset($meta['faculty']) && $meta['faculty'] == $row['id'] ? 'selected' : '' ?>>
+                                                <?php echo ucwords($row['name']) ?>
                                             </option>
                                         <?php endwhile; ?>
                                     </select>
@@ -353,17 +339,8 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                 </div>
                             </div>
 
-                            <div class="form-group" id="section-input-group">
-                                <div class="col-sm-12">
-                                    <label>
-                                        <input type="checkbox" id="toggle-section"> Show Section Dropdown
-                                    </label>
-                                    <label for="section-display" class="control-label">Yr. and Section</label>
-                                    <input type="hidden" id="section-display" name="section_display" class="form-control" readonly>
-                                </div>
-                            </div>
 
-                            <div class="form-group" id="section-dropdown-group">
+                            <div class="form-group">
                                 <label for="yrsection" class="col-sm-6 control-label">Section</label>
 
                                 <div class="col-sm-12">
@@ -371,25 +348,22 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                         onchange="populateSubjects()">
                                         <option value="0" disabled selected>Select Yr. & Sec.</option>
                                         <?php
-                                        // Modify SQL query to create an object with year and section
-                                    $sql = "SELECT *, CONCAT(year, ' ', section) AS yr_section FROM section WHERE dept_id = '$dept_id' ORDER BY year ASC, section ASC";
+                                        // Modify the SQL query to filter by dept_id and include an ORDER BY clause to sort by year and section
+                                        $sql = "SELECT * FROM section WHERE dept_id = '$dept_id' ORDER BY year ASC, section ASC";
+                                        $query = $conn->query($sql);
 
-                                    $query = $conn->query($sql);
-
-                                    // Loop through and create objects
-                                    while ($row = $query->fetch_array()):
-                                    $yrsection_data = new stdClass();
-                                    $yrsection_data->year = $row['year'];
-                                    $yrsection_data->section = $row['section'];
-                                    $yrsection_display = ucwords($row['yr_section']); // Combined year and section for display
-                                    ?>
-                                    <option value="<?php echo htmlspecialchars(json_encode($yrsection_data)) ?>" <?php echo isset($meta['course']) && json_encode($meta['course']) === json_encode($yrsection_data) ? 'selected' : '' ?>>
-                                        <?php echo $yrsection_display ?>
-                                    </option>
-                                    <?php endwhile; ?>
+                                        // Loop through the fetched rows and populate the dropdown
+                                        while ($row = $query->fetch_array()):
+                                            $yr_section_value = $row['year'] . $row['section']; // Combine year and section for value
+                                            $yr_section_display = $row['year'] . " " . $row['section']; // Display in a readable format
+                                            ?>
+                                            <option value="<?php echo htmlspecialchars($yr_section_value) ?>" <?php echo isset($meta['course']) && $meta['course'] == $yr_section_value ? 'selected' : '' ?>>
+                                                <?php echo ucwords(htmlspecialchars($yr_section_display)) ?>
+                                            </option>
+                                        <?php endwhile; ?>
                                     </select>
                                 </div>
-                            </div>
+
 
                                 <div class="form-group">
                                     <label for="subject" class="col-sm-3 control-label">Subject</label>
@@ -480,7 +454,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                             <option value="" disabled selected>Select Timeslot</option>
                                             <?php
                                             // Query to fetch timeslots based on department
-                                            $sql = "SELECT * FROM timeslot  WHERE dept_id = '$dept_id'";
+                                            $sql = "SELECT * FROM timeslot";
                                             $query = $conn->query($sql);
 
                                             // Loop through the fetched rows and populate the dropdown
@@ -529,156 +503,84 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
 
                                     //     });
-
-                                    // $('.edit_load').click(function () {
-                                    //     // Get the data-id attribute from the clicked button
-                                    //     const loadId = $(this).attr('data-id');
-
-                                    //     // Add the ID to the URL parameter
-                                    //     const currentUrl = window.location.href.split('?')[0]; // Remove existing parameters
-                                    //     const newUrl = `${currentUrl}?id=${loadId}`;
-                                    //     window.history.pushState(null, '', newUrl); // Update the URL without reloading
-
-                                    //     // Set the value of the hidden input in the modal
-                                    //     $('#load_id').val(loadId);
-
-                                    //     // Open the modal
-                                    //     $('#newScheduleModal').modal('show');
+                                    // $(document).on('click', '.edit_load', function () {
+                                    //     const loadId = $(this).data('id'); // Get the data-id from the clicked button
+                                    //     $.ajax({
+                                    //         url: 'fetch_load.php', // Your PHP script to fetch data
+                                    //         method: 'GET',
+                                    //         data: { id: loadId },
+                                    //         dataType: 'json',
+                                    //         success: function (response) {
+                                    //             if (response.success) {
+                                    //                 // Populate inputs with the fetched data
+                                    //                 $('#load_id').val(response.data.id);
+                                    //                 $('#faculty').val(response.data.faculty).trigger('change'); // Trigger change for select2
+                                    //                 $('#semester').val(response.data.semester);
+                                    //                 $('#course').val(response.data.course).trigger('change');
+                                    //                 $('#yrsection').val(response.data.yrsection).trigger('change');
+                                    //                 $('#subject').val(response.data.subject).trigger('change');
+                                    //                 $('#room').val(response.data.room).trigger('change');
+                                    //                 $('#days').val(response.data.days);
+                                    //                 $('#timeslot_id').val(response.data.timeslot_id).trigger('change');
+                                    //                 // Populate hidden inputs
+                                    //                 $('#description').val(response.data.description);
+                                    //                 $('#total_units').val(response.data.total_units);
+                                    //                 $('#lec_units').val(response.data.lec_units);
+                                    //                 $('#lab_units').val(response.data.lab_units);
+                                    //                 $('#hours').val(response.data.hours);
+                                    //                 $('#timeslot_sid').val(response.data.timeslot_sid);
+                                    //             } else {
+                                    //                 alert('Failed to fetch data.');
+                                    //             }
+                                    //         },
+                                    //         error: function () {
+                                    //             alert('An error occurred while fetching data.');
+                                    //         }
+                                    //     });
                                     // });
-                                    let isEditLoadClicked = false; // Flag to check if edit_load was clicked
-                                            // Hide the faculty-dropdown-group when "edit_load" is clicked
-                                    $('.edit_load').on('click', function () {
-                                        isEditLoadClicked = true;
-                                        $('#faculty-dropdown-group').hide();
-                                        $('#faculty-input-group').show();
-                                        $('#section-dropdown-group').hide();
-                                        $('#section-input-group').show();
-                                    });
 
-                                    // Show the faculty-dropdown-group when newScheduleModal is closed
-                                    $('#newScheduleModal').on('hidden.bs.modal', function () {
-                                        $('#faculty-dropdown-group').show();
-                                        $('#faculty-input-group').hide();
-                                        $('#section-dropdown-group').show();
-                                        $('#section-input-group').hide();
-                                        isEditLoadClicked = false;
-                                    });
+                                    // $('#newScheduleModal').on('hidden.bs.modal', function () {
+                                    //     $(this).find('form')[0].reset(); // Reset the form
+                                    //     $(this).find('.select2').val(null).trigger('change'); // Reset select2 fields
+                                    // });
 
-                                     // Toggle Faculty Dropdown
-                                    $('#toggle-faculty').change(function () {
-                                        if ($(this).is(':checked')) {
-                                            $('#faculty-dropdown-group').show();
-                                            $('#faculty-display').prop('readonly', true); // Set to readonly
-                                        } else {
-                                            $('#faculty-dropdown-group').hide();
-                                            $('#faculty-display').prop('readonly', false); // Remove readonly
-                                        }
-                                    });
-
-                                    // Toggle Section Dropdown
-                                    $('#toggle-section').change(function () {
-                                        if ($(this).is(':checked')) {
-                                            $('#section-dropdown-group').show();
-                                            $('#section-display').prop('readonly', true); // Set to readonly
-                                        } else {
-                                            $('#section-dropdown-group').hide();
-                                            $('#section-display').prop('readonly', false); // Remove readonly
-                                        }
-                                    });
-
-                                    $(document).on('click', '.edit_load', function () {
-                                        const loadId = $(this).data('id'); // Get the data-id from the clicked button
-                                        console.log(loadId);
-                                        $.ajax({
-                                            url: 'fetch_load.php', // Your PHP script to fetch data
-                                            method: 'GET',
-                                            data: { id: loadId },
-                                            dataType: 'json',
-                                            success: function (response) {
-                                                if (response.success) {
-                                                    console.log(response.data.faculty)
-                                                    // Populate inputs with the fetched data
-                                                    $('#load_id').val(response.data.id);
-                                                    $('#faculty-id').val(response.data.faculty).trigger('change');
-                                                    $('#faculty-display').val(response.data.full_name).trigger('change'); // Trigger change for select2
-                                                    $('#semester').val(response.data.semester);
-                                                    $('#course').val(response.data.coursedesc).trigger('change');
-                                                    $('#section-display').val(response.data.course);
-                                                    //$('#yrsection').val(response.data.year + ' ' + response.data.section);
-                                                    $('#subject').val(response.data.subjects).trigger('change');
-                                                    $('#room').val(response.data.rooms).trigger('change');
-                                                    $('#days').val(response.data.days);
-                                                    $('#timeslot_id').val(response.data.timeslot_id).trigger('change');
-                                                    
-                                                    // Populate hidden inputs
-                                                    $('#timeslot').val(response.data.timeslot);
-                                                    $('#description').val(response.data.sub_description);
-                                                    $('#total_units').val(response.data.total_units);
-                                                    $('#lec_units').val(response.data.lec_units);
-                                                    $('#lab_units').val(response.data.lab_units);
-                                                    $('#hours').val(response.data.hours);
-                                                    $('#room_name').val(response.data.room_name);
-                                                    $('#timeslot_sid').val(response.data.timeslot_id);
-
-                                                     // Open the modal
-                                                    $('#newScheduleModal').modal('show');
-                                                } else {
-                                                    alert('Failed to fetch data.');
-                                                }
-                                            },
-                                            error: function () {
-                                                alert('An error occurred while fetching data.');
-                                            }
-                                        });
-                                    });
 
                                     $('#newScheduleModal').on('hide.bs.modal', function () {
-                                    // Clear all input values in the modal
-                                    $('#load_id').val('');
-                                    $('#faculty-id').val('').trigger('change');
-                                    $('#faculty-display').val('').trigger('change');
-                                    $('#semester').val('');
-                                    $('#course').val('').trigger('change');
-                                    $('#section-display').val('');
-                                    $('#subject').val('').trigger('change');
-                                    $('#room').val('').trigger('change');
-                                    $('#days').val('');
-                                    $('#timeslot_id').val('').trigger('change');
-                                    
-                                    // Clear hidden inputs
-                                    $('#timeslot').val('');
-                                    $('#description').val('');
-                                    $('#total_units').val('');
-                                    $('#lec_units').val('');
-                                    $('#lab_units').val('');
-                                    $('#hours').val('');
-                                    $('#room_name').val('');
-                                    $('#timeslot_sid').val('');
+                                        // Clear the 'load_id' and 'dept_id' inputs
+                                        $('#load_id').val('');
+                                        $('#dept_id').val('');
+                                        const url = new URL(window.location.href);
+                                        url.searchParams.delete('id');
+                                        history.replaceState(null, '', url);
+                                    });
 
-                                    $('#faculty-input-group').hide();
-                                    $('#section-input-group').hide();
-                                    // If you are using a select2 plugin, you may need to reset it as well
-                                    // Example:
-                                    // $('#faculty-id').val('').trigger('change'); // To reset select2 if necessary
-                                });
+
+                                    $('.edit_load').click(function () {
+                                        // Get the data-id attribute from the clicked button
+                                        const loadId = $(this).attr('data-id');
+
+                                        // Add the ID to the URL parameter
+                                        const currentUrl = window.location.href.split('?')[0]; // Remove existing parameters
+                                        const newUrl = `${currentUrl}?id=${loadId}`;
+                                        window.history.pushState(null, '', newUrl); // Update the URL without reloading
+
+                                        // Set the value of the hidden input in the modal
+                                        $('#load_id').val(loadId);
+
+                                        // Open the modal
+                                        $('#newScheduleModal').modal('show');
+                                    });
+
 
                                     $('.select2').select2({
                                         placeholder: 'Please Select Here',
                                         width: '100%'
                                     })
 
-                                    // Enable validateForm when edit_load is not clicked
                                     $('#newScheduleForm').submit(function (e) {
                                         e.preventDefault();
 
-                                        // If edit_load is clicked, don't validate
-                                        if (isEditLoadClicked) {
-                                            // Perform the form submission directly if edit_load was clicked
-                                            submitForm();
-                                            return;
-                                        }
-
-                                        // Validate form if edit_load was not clicked
+                                        // Validate form before submission
                                         if (!validateForm()) {
                                             Swal.fire({
                                                 icon: 'warning',
@@ -691,16 +593,10 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
                                         // Clear any previous messages
                                         $('#msg').html('');
-                                        
-                                        // Perform the form submission
-                                        submitForm();
-                                    });
 
-                                    // Form submission via AJAX
-                                    function submitForm() {
                                         $.ajax({
                                             url: 'ajax.php?action=save_roomschedule',
-                                            data: new FormData($('#newScheduleForm')[0]),
+                                            data: new FormData($(this)[0]),
                                             cache: false,
                                             contentType: false,
                                             processData: false,
@@ -738,7 +634,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                                 }
                                             }
                                         });
-                                    }
+                                    });
 
                                     // Form validation function
                                     function validateForm() {
@@ -969,66 +865,49 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     function populateSubjects() {
                                         var e = document.getElementById('yrsection');
                                         var sem = document.getElementById('semester');
+                                        if (!e || !sem) {
+                                            console.error('yrsection or semester element not found!');
+                                            return;
+                                        }
+
                                         var semester = sem.options[sem.selectedIndex].value;
                                         var course = e.options[e.selectedIndex].getAttribute('data-course');
                                         var year = e.options[e.selectedIndex].getAttribute('data-year');
-                                        //var attrs = option.attributes;
-                                        var courseyear = course + " " + year;
-                                        console.log(course);
-                                        console.log(year);
-                                        console.log(semester);
-
 
                                         var subjectel = document.getElementById('subject');
+                                        subjectel.innerHTML = "<option value='0'>Select Subject</option>";
 
-                                        subjectel.innerHTML = "";
-
-                                        var subjectopt = document.createElement('option');
-                                        subjectopt.value = 0;
-                                        subjectopt.innerHTML = 'Select Subject';
-                                        subjectel.appendChild(subjectopt);
-
-
-                                        // AJAX request
                                         var xhttp = new XMLHttpRequest();
                                         xhttp.open("POST", "gfg.php", true);
                                         xhttp.setRequestHeader("Content-Type", "application/json");
                                         xhttp.onreadystatechange = function () {
-                                            if (this.readyState == 4 && this.status == 200) {
-                                                // Response
-                                                var response = JSON.parse(this.responseText);
-
-                                                var len = 0;
-                                                if (response != null) {
-                                                    len = response.length;
-                                                }
-
-                                                if (len > 0) {
-                                                    // Read data and create <option >
-                                                    for (var i = 0; i < len; i++) {
-
-                                                        var id = response[i].id;
-                                                        var name = response[i].name;
-                                                        var specialization = response[i].specialization;
-
-                                                        // Add option to state dropdown
-                                                        var opt = document.createElement('option');
-                                                        opt.value = id;
-                                                        opt.innerHTML = name;
-
-                                                        const special = document.createAttribute("data-special");
-                                                        // Set the value of the class attribute:
-                                                        special.value = specialization;
-                                                        opt.setAttributeNode(special);
-                                                        subjectel.appendChild(opt);
-
+                                            if (this.readyState == 4) {
+                                                if (this.status == 200) {
+                                                    try {
+                                                        var response = JSON.parse(this.responseText);
+                                                        response.forEach(function (item) {
+                                                            var opt = document.createElement('option');
+                                                            opt.value = item.id;
+                                                            opt.innerHTML = item.name;
+                                                            opt.setAttribute('data-special', item.specialization);
+                                                            subjectel.appendChild(opt);
+                                                        });
+                                                    } catch (err) {
+                                                        console.error('Invalid JSON response:', err);
                                                     }
+                                                } else {
+                                                    console.error('AJAX error: ' + this.statusText);
                                                 }
                                             }
                                         };
+                                        xhttp.onerror = function () {
+                                            console.error('AJAX request failed.');
+                                        };
+
                                         var data = { request: 'getSubjects', course: course, year: year, semester: semester };
                                         xhttp.send(JSON.stringify(data));
                                     }
+
 
                                     function populateTimeslot(subject, days) {
                                         var e = document.getElementById('subject');
