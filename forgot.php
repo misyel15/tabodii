@@ -61,7 +61,7 @@ ini_set('display_errors', 1);
             border: none;
         }
         .card-header {
-            background-color: red;
+            background-color: lightgray;
             color: black;
             text-align: center;
             padding: 1.5rem;
