@@ -29,13 +29,13 @@ $currentTime = date('d-m-Y h:i:s A', time());
         <br>
         <br>
         <br>
-        <div class="content-wrapper">
-            <section class="container-fluid">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
-                            <div class="au-card-title" style="background-image:url('<?php echo htmlentities($data['Image']); ?>'); background-color: #8B0000;">
-                             
+       <div class="content-wrapper">
+    <section class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40">
+                    <div class="au-card-title" style="background-image:url('<?php echo htmlentities($data['Image']); ?>'); background-color: #FF4500;">
+
                                 <?php
                                 // Fetch unread notifications count
                                 $unreadQuery = "SELECT COUNT(*) AS unread_count FROM notifications WHERE status = 'unread'";
