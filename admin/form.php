@@ -70,7 +70,7 @@ include 'includes/head.php';
         }
 
         .card-header {
-            background-color: lightgray;
+            background-color: red;
             color: black;
             text-align: center;
             padding: 1.5rem;
