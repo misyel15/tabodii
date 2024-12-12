@@ -21,23 +21,22 @@ function sendemail($email, $reset_token)
     $mail = new PHPMailer(true);
 
     try {
-        //Server settings
+        // Server settings
         $mail->isSMTP();
-        $mail->Host = 'smtp.office365.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'zeninmacky05@gmail.com'; // SMTP username
-        $mail->Password = 'frut mage zsxu mzsd';    // SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'collegeofinfotech2023@gmail.com'; // Use environment variable for security
+            $mail->Password = 'ohwp vvlw pfyx xkfo'; // Use environment variable for security
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-        //Recipients
-        $mail->setFrom('mccschedsystem@gmail.com', 'MCC SCHED SYSTEM ADMIN');
+            $mail->setFrom('collegeofinfotech2023@gmail.com', 'MCC SCHED SYSTEM ADMIN'); // Update sender email
         $mail->addAddress($email);
 
-        //Reset link
-        $resetLink = 'https://mccfacultyscheduling.com/admin/reset_password?email=' . urlencode($email) . '&token=' . $reset_token;
+        // Reset link
+        $resetLink = 'http://localhost/sched/admin//reset_password.php?email=' . urlencode($email) . '&token=' . $reset_token;
 
-        //Content
+        // Content
         $mail->isHTML(true);
         $mail->Subject = 'Here is your link to Reset the password of your MCC SCHED-SYSTEM Account';
         $mail->Body = "
@@ -45,7 +44,7 @@ function sendemail($email, $reset_token)
         <head>
             <style>
                 body {
-                    font-family: 'Times New Roman', serif;
+                    font-family: Arial, sans-serif;
                     background-color: #f4f4f4;
                 }
                 .container {
@@ -170,7 +169,7 @@ if (isset($_POST['reset'])) {
         /* Main layout adjustments */
         body {
             background-color: #f4f4f4;
-           font-family: 'Times New Roman', serif;
+            font-family: 'Source Sans Pro', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -191,7 +190,7 @@ if (isset($_POST['reset'])) {
         }
 
         .card-header {
-            background-color:  #8B0000;
+            background-color: #8B0000;
             color: white;
             text-align: center;
             padding: 1.5rem;
@@ -275,7 +274,7 @@ if (isset($_POST['reset'])) {
                 </div>
             </form>
             <p class="mt-3 mb-1">
-                <a href="login">Login</a>
+                <a href="index.php">Login</a>
             </p>
         </div>
     </div>
