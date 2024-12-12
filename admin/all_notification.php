@@ -102,7 +102,7 @@ $currentTime = date('d-m-Y h:i:s A', time());
     <!-- Styles for unread notifications -->
     <style type="text/css">
         .unread {
-            background-color: antiquewhite; /* Background color for unread notifications */
+            background-color: red; /* Background color for unread notifications */
         }
     </style>
 
