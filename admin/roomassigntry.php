@@ -454,7 +454,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                             <option value="" disabled selected>Select Timeslot</option>
                                             <?php
                                             // Query to fetch timeslots based on department
-                                            $sql = "SELECT * FROM timeslot";
+                                            $sql = "SELECT * FROM timeslot WHERE dept_id = '$dept_id'";
                                             $query = $conn->query($sql);
 
                                             // Loop through the fetched rows and populate the dropdown
@@ -497,31 +497,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                 <script>
 
                                     $(document).ready(function() {
-    // When the 'Days' dropdown changes
-    $('#days').on('change', function() {
-        var selectedDay = $(this).val(); // Get the selected day
-        var deptId = $('#dept_id').val(); // Get the department ID from a hidden field or dropdown
-
-        // Make sure both the selected day and dept_id are valid
-        if (selectedDay && deptId) {
-            $.ajax({
-                url: 'get_timeslots.php',  // Server-side script to fetch timeslots
-                type: 'POST',
-                data: { day: selectedDay, dept_id: deptId }, // Send both day and dept_id to the server
-                success: function(response) {
-                    // Populate the timeslot dropdown with the response data
-                    $('#timeslot_id').html(response);
-                },
-                error: function() {
-                    alert('Error loading timeslots.');
-                }
-            });
-        } else {
-            $('#timeslot_id').html('<option value="">Select Timeslot</option>');  // Clear options if no day or dept_id is selected
-        }
-    });
-});
-
+  
                                     // document.addEventListener('DOMContentLoaded', function () {
                                     // // Event listener for edit buttons
                                     // document.querySelectorAll('.edit_load').forEach(button => {
