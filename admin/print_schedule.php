@@ -64,7 +64,7 @@ function printPageHeader($dept_id) {
             window.history.back(); // Go back to the previous page
         } else {
             // Redirect to a specific page if no history is available
-            window.location.href = 'https://mccfacultyscheduling.com/admin/roomsched.php'; // Replace with your desired URL
+            window.location.href = 'https://mccfacultyscheduling.com/admin/roomsched'; // Replace with your desired URL
         }
     };
 
@@ -86,6 +86,7 @@ function printPageHeader($dept_id) {
                     <th class="text-center">Time</th>
                     <th class="text-center">MW</th>
                     <th class="text-center">TTH</th>
+                    <th class="text-center">FS</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,7 +113,7 @@ function printPageHeader($dept_id) {
                 foreach ($times as $time) {
                     echo "<tr><td>" . htmlspecialchars($time) . "</td>";
 
-                    foreach (['MW', 'TTH'] as $days) {
+                    foreach (['MW', 'TTH', 'FS'] as $days) {
                         echo "<td>";
                         
                         $query = "SELECT course, subjects, faculty FROM loading WHERE timeslot = ? AND days = ?";
