@@ -454,7 +454,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                             <option value="" disabled selected>Select Timeslot</option>
                                             <?php
                                             // Query to fetch timeslots based on department
-                                            $sql = "SELECT * FROM timeslot WHERE dept_id = '$dept_id'";
+                                            $sql = "SELECT * FROM timeslot";
                                             $query = $conn->query($sql);
 
                                             // Loop through the fetched rows and populate the dropdown
@@ -488,16 +488,8 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                     <span class="rem badge badge-primary" onclick="rem_func($(this))"><i
                                             class="fa fa-times"></i></span>
                                 </div>
-                                <!-- Include jQuery from a CDN -->
-
-
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
                                 <script>
-
-                                    $(document).ready(function() {
-  
                                     // document.addEventListener('DOMContentLoaded', function () {
                                     // // Event listener for edit buttons
                                     // document.querySelectorAll('.edit_load').forEach(button => {
