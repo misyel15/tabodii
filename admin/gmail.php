@@ -21,17 +21,17 @@ function sendOTP($email, $otp)
     $mail = new PHPMailer(true);
 
     try {
-        $mail->isSMTP();
-        $mail->SMTPDebug = SMTP::DEBUG_OFF;
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'zeninmacky05@gmail.com'; // SMTP username
-        $mail->Password = 'frut mage zsxu mzsd';    // SMTP password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port = 465;
+          $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'collegeofinfotech2023@gmail.com'; // Use environment variable for security
+            $mail->Password = 'ohwp vvlw pfyx xkfo'; // Use environment variable for security
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-        $mail->setFrom('mccschedsystem@gmail.com', 'MCC SCHED SYSTEM ADMIN');
+            $mail->setFrom('collegeofinfotech2023@gmail.com', 'MCC SCHED SYSTEM ADMIN'); // Update sender email
         $mail->addAddress($email);
+
 
         $mail->isHTML(true);
         $mail->Subject = 'Your OTP for Password Reset';
