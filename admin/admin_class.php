@@ -738,75 +738,89 @@ class Action {
 	}
 	
 	function save_roomschedule() {
-		extract($_POST);
-		
-		// Ensure dept_id is extracted from the session
-		$dept_id = $_SESSION['dept_id']; // Retrieve dept_id from session
-	
-		$data = " timeslot_id = '$timeslot_id' ";
-		$data .= ", timeslot = '$timeslot' ";
-		$data .= ", rooms = '$room' ";
-		$data .= ", faculty = '$faculty' ";
-		$data .= ", course = '$yrsection' ";
-		$data .= ", subjects = '$subject' ";
-		$data .= ", semester = '$semester' ";
-		$data .= ", days = '$days' ";
-		$data .= ", sub_description = '$description' ";
-		$data .= ", total_units = '$total_units' ";
-		$data .= ", lec_units = '$lec_units' ";
-		$data .= ", lab_units = '$lab_units' ";
-		$data .= ", coursedesc = '$course' ";
-		$data .= ", hours = '$hours' ";
-		$data .= ", timeslot_sid = '$timeslot_sid' ";
-		$data .= ", room_name = '$room_name' ";
-		$data .= ", dept_id = '$dept_id' "; // Add dept_id to the data string
-	
-		if (empty($id)) {
-			// Decrease the subject status if this is a new entry
-			$query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
-			foreach ($query as $key) {
-				$status = $key['status'];
-				$newstats = $status - 1;
-				$subjectStats = "status =" . $newstats;
-				$this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
-			}
-	
-			// Check for existing loading entry
-			$sql = "SELECT * FROM loading WHERE timeslot_id ='$timeslot_id' AND rooms='$room' AND days='$days' AND dept_id='$dept_id'";
-			$query = $this->db->query($sql);
-	
-			if ($query->num_rows == 0) {
-				$save = $this->db->query("INSERT INTO loading SET " . $data);
-			} else {
-				return 2; // Return 2 for duplicate entry
-			}
-		} else {
-			// Decrease the subject status when updating
-			$query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
-			foreach ($query as $key) {
-				$status = $key['status'];
-				$newstats = $status - 1;
-				$subjectStats = "status =" . $newstats;
-				$this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
-			}
-			$save = $this->db->query("UPDATE loading SET " . $data . " WHERE id=" . $id);
-		}
-	
-		// Prepare notification variables
-		$user_id = $_SESSION['user_id']; // Assuming you're storing user_id in session
-		$message = empty($id) ? 'New room schedule added: ' . $timeslot : 'Room schedule updated: ' . $timeslot;
-		$status = 'unread'; // Mark notification as unread
-		$timestamp = date('Y-m-d H:i:s'); // Current timestamp
-	
-		// Insert notification record if save was successful
-		if ($save) {
-			$this->db->query("INSERT INTO notifications (user_id, message, status, created_at)
-							  VALUES ('$user_id', '$message', '$status', '$timestamp')");
-			return 1; // Return 1 for successful save
-		}
-	
-		return 0; // Return 0 if save operation fails
-	}
+    extract($_POST);
+    
+    // Ensure dept_id is extracted from the session
+    $dept_id = $_SESSION['dept_id']; // Retrieve dept_id from session
+
+    $data = " timeslot_id = '$timeslot_id' ";
+    $data .= ", timeslot = '$timeslot' ";
+    $data .= ", rooms = '$room' ";
+    $data .= ", faculty = '$faculty' ";
+    $data .= ", course = '$yrsection' ";
+    $data .= ", subjects = '$subject' ";
+    $data .= ", semester = '$semester' ";
+    $data .= ", days = '$days' ";
+    $data .= ", sub_description = '$description' ";
+    $data .= ", total_units = '$total_units' ";
+    $data .= ", lec_units = '$lec_units' ";
+    $data .= ", lab_units = '$lab_units' ";
+    $data .= ", coursedesc = '$course' ";
+    $data .= ", hours = '$hours' ";
+    $data .= ", timeslot_sid = '$timeslot_sid' ";
+    $data .= ", room_name = '$room_name' ";
+    $data .= ", dept_id = '$dept_id' "; // Add dept_id to the data string
+
+    // Check for duplicate faculty, timeslot, room, and days
+    $duplicateCheckSQL = "SELECT * FROM loading 
+                          WHERE faculty = '$faculty' 
+                          AND timeslot_id = '$timeslot_id' 
+                          AND rooms = '$room' 
+                          AND days = '$days' 
+                          AND dept_id = '$dept_id'";
+    $duplicateCheck = $this->db->query($duplicateCheckSQL);
+
+    if ($duplicateCheck->num_rows > 0) {
+        return "Duplicate schedule: Faculty is already assigned to this timeslot, room, and day.";
+    }
+
+    if (empty($id)) {
+        // Decrease the subject status if this is a new entry
+        $query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
+        foreach ($query as $key) {
+            $status = $key['status'];
+            $newstats = $status - 1;
+            $subjectStats = "status =" . $newstats;
+            $this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
+        }
+
+        // Check for existing loading entry
+        $sql = "SELECT * FROM loading WHERE timeslot_id ='$timeslot_id' AND rooms='$room' AND days='$days' AND dept_id='$dept_id'";
+        $query = $this->db->query($sql);
+
+        if ($query->num_rows == 0) {
+            $save = $this->db->query("INSERT INTO loading SET " . $data);
+        } else {
+            return "Duplicate schedule: Room and timeslot already occupied on the specified day.";
+        }
+    } else {
+        // Decrease the subject status when updating
+        $query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
+        foreach ($query as $key) {
+            $status = $key['status'];
+            $newstats = $status - 1;
+            $subjectStats = "status =" . $newstats;
+            $this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
+        }
+        $save = $this->db->query("UPDATE loading SET " . $data . " WHERE id=" . $id);
+    }
+
+    // Prepare notification variables
+    $user_id = $_SESSION['user_id']; // Assuming you're storing user_id in session
+    $message = empty($id) ? 'New room schedule added: ' . $timeslot : 'Room schedule updated: ' . $timeslot;
+    $status = 'unread'; // Mark notification as unread
+    $timestamp = date('Y-m-d H:i:s'); // Current timestamp
+
+    // Insert notification record if save was successful
+    if ($save) {
+        $this->db->query("INSERT INTO notifications (user_id, message, status, created_at)
+                          VALUES ('$user_id', '$message', '$status', '$timestamp')");
+        return 1; // Return 1 for successful save
+    }
+
+    return 0; // Return 0 if save operation fails
+}
+
 	function save_roomscheduletth(){
 		extract($_POST);
 		$data = " timeslot_id = '$timeslot_id' ";
