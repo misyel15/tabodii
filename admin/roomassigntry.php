@@ -577,7 +577,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                                                     Swal.fire({
                                                         icon: 'error',
                                                         title: 'Error',
-                                                        text: 'An unexpected error occurred'
+                                                       text: 'Faculty, Room, Days and Timeslot already exist'
                                                     });
                                                 }
                                             }
