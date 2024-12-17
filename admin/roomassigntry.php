@@ -542,73 +542,59 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
                                         // Clear any previous messages
                                         $('#msg').html('');
+     $.ajax({
+                                            url: 'ajax.php?action=save_roomschedule',
+                                            data: new FormData($(this)[0]),
+                                            cache: false,
+                                            contentType: false,
+                                            processData: false,
+                                            method: 'POST',
+                                            type: 'POST',
+                                            success: function (resp) {
+                                                if (resp == 1) {
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Success',
+                                                        text: 'Data successfully saved',
+                                                        showConfirmButton: true
+                                                    }).then(() => {
+                                                        setTimeout(function () {
+                                                            location.reload();
+                                                        }, 1500);
+                                                    });
+                                                } else if (resp == 2) {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Room and Timeslot already exist',
+                                                        showConfirmButton: true
+                                                    }).then(() => {
+                                                        setTimeout(function () {
+                                                            location.reload();
+                                                        }, 1500);
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'An unexpected error occurred'
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    });
 
-                                       $.ajax({
-    url: 'ajax.php?action=save_roomschedule',
-    data: new FormData($(this)[0]),
-    cache: false,
-    contentType: false,
-    processData: false,
-    method: 'POST',
-    type: 'POST',
-    success: function (resp) {
-        if (resp == 1) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Data successfully saved',
-                showConfirmButton: true
-            }).then(() => {
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-            });
-        } else if (resp == 2) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Room and Timeslot already exist',
-                showConfirmButton: true
-            }).then(() => {
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-            });
-        } else if (resp == 3) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Conflict Detected',
-                text: 'The faculty already has a schedule at this time.',
-                showConfirmButton: true
-            }).then(() => {
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An unexpected error occurred',
-                showConfirmButton: true
-            });
-        }
-    }
-});
-
-// Form validation function
-function validateForm() {
-    let isValid = true;
-    $('#newScheduleForm select').each(function () {
-        if ($(this).val() === null || $(this).val() === "0" || $(this).val() === "") {
-            isValid = false;
-            return false;  // Break out of loop if invalid
-        }
-    });
-    return isValid;
-}
-
-
+                                    // Form validation function
+                                    function validateForm() {
+                                        let isValid = true;
+                                        $('#newScheduleForm select').each(function () {
+                                            if ($(this).val() === null || $(this).val() === "0" || $(this).val() === "") {
+                                                isValid = false;
+                                                return false;  // Break out of loop if invalid
+                                            }
+                                        });
+                                        return isValid;
+                                    }
 
 
                                     document.getElementById('timeslot_id').addEventListener('change', function () {
