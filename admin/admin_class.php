@@ -737,59 +737,79 @@ class Action {
 		return $delete ? 1 : 2; // Return 1 for success, 2 for failure
 	}
 	
-	
-	function save_roomschedule(){
-		extract($_POST);
-		$data = " timeslot_id = '$timeslot_id' ";
-		$data .= ", timeslot = '$timeslot' ";
-		$data .= ", rooms = '$room' ";
-		$data .= ", faculty = '$faculty' ";
-		$data .= ", course = '$yrsection' ";
-		$data .= ", subjects = '$subject' ";
-		$data .= ", semester = '$semester' ";
-		//$rdata = implode($dow);
-		$data .= ", days = '$days' ";
-		$data .= ", sub_description = '$description' ";
-		$data .= ", total_units = '$total_units' ";
-		$data .= ", lec_units = '$lec_units' ";
-		$data .= ", lab_units = '$lab_units' ";
-		$data .= ", coursedesc = '$course' ";
-		$data .= ", hours = '$hours' ";
-		$data .= ", timeslot_sid = '$timeslot_sid' ";
-		$data .= ", room_name = '$room_name' ";
-		$data .= "dept_id = '$dept_id' "; // Add dept_id to the data string
+	function save_roomschedule() {
+    extract($_POST);
+    $data = " timeslot_id = '$timeslot_id' ";
+    $data .= ", timeslot = '$timeslot' ";
+    $data .= ", rooms = '$room' ";
+    $data .= ", faculty = '$faculty' ";
+    $data .= ", course = '$yrsection' ";
+    $data .= ", subjects = '$subject' ";
+    $data .= ", semester = '$semester' ";
+    $data .= ", days = '$days' ";
+    $data .= ", sub_description = '$description' ";
+    $data .= ", total_units = '$total_units' ";
+    $data .= ", lec_units = '$lec_units' ";
+    $data .= ", lab_units = '$lab_units' ";
+    $data .= ", coursedesc = '$course' ";
+    $data .= ", hours = '$hours' ";
+    $data .= ", timeslot_sid = '$timeslot_sid' ";
+    $data .= ", room_name = '$room_name' ";
+    $data .= ", dept_id = '$dept_id' "; // Add dept_id to the data string
 
-		if(empty($id)){
-			$query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
-			foreach ($query as $key) {
-			$status = $key['status'];
-			$newstats = $status - 1;
-			$subjectStats = "status =".$newstats;
-			$update = $this->db->query("UPDATE subjects set ".$subjectStats." where subject='$subject'");
-			}				
-			$sql = "SELECT * FROM loading WHERE timeslot_id ='$timeslot_id' AND rooms='$room' AND days='$days'";
-			$query = $this->db->query($sql);
+    // Check for conflicts
+    if (empty($id)) {
+        // Insert case: Check for existing records
+        $sql = "SELECT * FROM loading WHERE faculty = ? AND rooms = ? AND days = ? AND timeslot = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ssss", $faculty, $room, $days, $timeslot);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-			if($query->num_rows == 0){
-				$save = $this->db->query("INSERT INTO loading set ".$data);
-			}else{
-				return 2;
-			}
-			
-		}else{
-			$query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
-			foreach ($query as $key) {
-			$status = $key['status'];
-			$newstats = $status - 1;
-			$subjectStats = "status =".$newstats;
-			$update = $this->db->query("UPDATE subjects set ".$subjectStats." where subject='$subject'");
-			}
-			$save = $this->db->query("UPDATE loading set ".$data." where id=".$id);
-		}
-		if($save){
-			return 1;
-		}
-	}
+        if ($result->num_rows > 0) {
+            return 3; // Conflict found: Faculty already has a schedule at this time
+        }
+
+        // Update subject status
+        $query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
+        foreach ($query as $key) {
+            $status = $key['status'];
+            $newstats = $status - 1;
+            $subjectStats = "status =" . $newstats;
+            $update = $this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
+        }
+
+        // Insert new record
+        $save = $this->db->query("INSERT INTO loading SET " . $data);
+    } else {
+        // Update case: Check for existing records excluding the current record
+        $sql = "SELECT * FROM loading WHERE faculty = ? AND rooms = ? AND days = ? AND timeslot = ? AND id != ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ssssi", $faculty, $room, $days, $timeslot, $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return 3; // Conflict found: Faculty already has a schedule at this time
+        }
+
+        // Update subject status
+        $query = $this->db->query("SELECT * FROM subjects WHERE subject='$subject'");
+        foreach ($query as $key) {
+            $status = $key['status'];
+            $newstats = $status - 1;
+            $subjectStats = "status =" . $newstats;
+            $update = $this->db->query("UPDATE subjects SET " . $subjectStats . " WHERE subject='$subject'");
+        }
+
+        // Update existing record
+        $save = $this->db->query("UPDATE loading SET " . $data . " WHERE id=" . $id);
+    }
+
+    if ($save) {
+        return 1; // Data successfully saved or updated
+    }
+}
 
 
 	function save_roomscheduletth(){
