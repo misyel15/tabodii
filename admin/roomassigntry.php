@@ -37,7 +37,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                         <i class="fa fa-user-plus"></i> New Entry
                     </button>
                 </div>
-                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate.php">
+                <form method="POST" class="form-inline mt-2" id="printra" action="roomassign_generate">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -112,7 +112,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printtth">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth.php">
+                <form method="POST" class="form-inline" id="printratth" action="roomassign_generatetth">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -188,7 +188,7 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
                 <button type="button" class="btn btn-success btn-sm btn-flat mr-2" id="printfri">
                     <span class="glyphicon glyphicon-print"></span><i class="fa fa-print"></i> Print
                 </button>
-                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri.php">
+                <form method="POST" class="form-inline" id="printrafri" action="roomassign_generatefri">
                     <!-- Form elements if needed -->
                 </form>
             </div>
@@ -1117,22 +1117,22 @@ $dept_id = $_SESSION['dept_id']; // Get the department ID from the session
 
                                     $('#print').click(function (e) {
                                         e.preventDefault();
-                                        $('#printra').attr('action', 'roomassign_generate.php');
+                                        $('#printra').attr('action', 'roomassign_generate');
                                         $('#printra').submit();
                                     });
                                     $('#printtth').click(function (e) {
                                         e.preventDefault();
-                                        $('#printratth').attr('action', 'roomassign_generatetth.php');
+                                        $('#printratth').attr('action', 'roomassign_generatetth');
                                         $('#printratth').submit();
                                     });
                                     $('#printfri').click(function (e) {
                                         e.preventDefault();
-                                        $('#printrafri').attr('action', 'roomassign_generatefri.php');
+                                        $('#printrafri').attr('action', 'roomassign_generatefri');
                                         $('#printrafri').submit();
                                     });
                                     $('#printsat').click(function (e) {
                                         e.preventDefault();
-                                        $('#printrasat').attr('action', 'roomassign_generatesat.php');
+                                        $('#printrasat').attr('action', 'roomassign_generatesat');
                                         $('#printrasat').submit();
                                     });
 
