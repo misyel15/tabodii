@@ -70,21 +70,25 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
             background: #b1b0b0;
             color: #000;
             margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
         .card2 {
             background: #99cc99;
             color: #000;
             margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
         .card3 {
             background: #009DD1;
             color: #000;
             margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
         .card4 {
-            background: #cc585c;
+            background: #FF6384;
             color: #000;
             margin-bottom: 1rem;
+            font-size: 1.3rem;
         }
         .card-body {
             text-align: center;
@@ -93,10 +97,9 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
             font-size: 3rem;
         }
         .chart-container {
-            position: relative;
-            height: 50vh;
-            width: 90%;
-            background: white;
+            width: 100%;
+            height: 0%;
+            margin: 0 auto;
         }
         @media (max-width: 1200px) {
             .main-container {
@@ -128,6 +131,13 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                 font-size: 1.5rem;
             }
         }
+
+        /* CSS for smaller pie chart */
+        .small-chart-container {
+            width: 80%;
+            height: 0%;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -148,7 +158,7 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                                 $stmt->execute();
                                 $query = $stmt->get_result();
                                 $num_rooms = $query->num_rows; // Number of rooms
-                                echo "<h3>".$num_rooms."</h3>";
+                                echo "<h1>".$num_rooms."</h1>";
                             ?> 
                             <p>Number of Rooms</p>                
                             <hr>
@@ -169,7 +179,7 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                                 $stmt->execute();
                                 $query = $stmt->get_result();
                                 $num_instructors = $query->num_rows; // Number of instructors
-                                echo "<h3>".$num_instructors."</h3>";
+                                echo "<h1>".$num_instructors."</h1>";
                             ?>
                             <p>Number of Instructors</p>  
                             <hr>
@@ -190,7 +200,7 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                                 $stmt->execute();
                                 $query = $stmt->get_result();
                                 $num_subjects = $query->num_rows; // Number of subjects
-                                echo "<h3>".$num_subjects."</h3>";
+                                echo "<h1>".$num_subjects."</h1>";
                             ?>
                             <p>Number of Subjects</p>  
                             <hr>
@@ -211,7 +221,7 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                                 $stmt->execute();
                                 $query = $stmt->get_result();
                                 $num_courses = $query->num_rows; // Number of courses
-                                echo "<h3>".$num_courses."</h3>";
+                                echo "<h1>".$num_courses."</h1>";
                             ?>
                             <p>Number of Courses</p>  
                             <hr>
@@ -220,28 +230,41 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                     </div>              
                 </div>
             </div>
-            <!-- Bar Chart Container -->
+
+            <!-- Bar Chart and Pie Chart Row -->
             <div class="row mt-4">
-                <div class="col-lg-7">
-                    <div class="card chart-container" style="box-shadow: 0 0 5px black;">
+                <div class="col-lg-6">
+                    <div class="card chart-container" >
                         <div class="card-header">
                             <h3>Number of Subjects Per Semester</h3>
                         </div>
-                        <div class="card-body">
+                       <div class="card-body">
                             <canvas id="subjectsBarChart"></canvas>
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card small-chart-container " >
+                        <div class="card-header">
+                            <h3>Subjects Distribution</h3>
                         </div>
+                         <div class="card-body">
+                            <canvas id="subjectsPieChart" width="200" height="200"></canvas>
+                        </div> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         $(document).ready(function(){
             var subjectsData = <?php echo $subjects_data; ?>; // Fetch dynamic data from PHP
 
-            var ctxSubjects = document.getElementById('subjectsBarChart').getContext('2d');
-            var subjectsBarChart = new Chart(ctxSubjects, {
+            // Bar Chart
+            var ctxBar = document.getElementById('subjectsBarChart').getContext('2d');
+            new Chart(ctxBar, {
                 type: 'bar',
                 data: {
                     labels: [
@@ -253,11 +276,10 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                     ],
                     datasets: [{
                         label: 'Number of Subjects',
-                        data: subjectsData, // Use dynamic data from PHP
+                        data: subjectsData,
                         backgroundColor: 'skyblue',
                         borderColor: 'rgba(0, 0, 0, 0)',
-                        borderWidth: 1,
-                        fill: true
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -275,6 +297,45 @@ $subjects_data = json_encode(array_values($subjects_per_semester));
                             callbacks: {
                                 label: function(tooltipItem) {
                                     return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Pie Chart
+            var ctxPie = document.getElementById('subjectsPieChart').getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        '1st Year - 1st Sem', '1st Year - 2nd Sem', 
+                        '2nd Year - 1st Sem', '2nd Year - 2nd Sem', 
+                        '3rd Year - 1st Sem', '3rd Year - 2nd Semester', 
+                        '3rd Year - Sum', '4th Year - 1st Sem', 
+                        '4th Year - 2nd Sem'
+                    ],
+                    datasets: [{
+                        label: 'Subjects Distribution',
+                        data: subjectsData,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', 
+                            '#FF9F40', '#4CAF50', '#FF6F61', '#33C3F0'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw;
                                 }
                             }
                         }
