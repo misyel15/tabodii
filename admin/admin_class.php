@@ -763,7 +763,7 @@ class Action {
 	
 		if (empty($id)) {
 			// Check for existing loading entry with the same faculty and days
-			$sql = "SELECT * FROM loading WHERE faculty = '$faculty' AND days = '$days' AND dept_id = '$dept_id'";
+			$sql = "SELECT * FROM loading WHERE faculty = '$faculty' AND timeslot = '$timeslot' AND dept_id = '$dept_id'";
 			$query = $this->db->query($sql);
 	
 			if ($query->num_rows > 0) {
